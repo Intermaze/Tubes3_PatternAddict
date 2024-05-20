@@ -10,15 +10,19 @@ class KnuthMorrisPratt {
         foreach (var data in database){
             bool patternFound = KMPSearch(pattern_string, data, lps);
             if (!patternFound){
-                string closestMatch = FindClosestMatch(pattern_string, data);
-                if(closestMatch != ""){
-                    int distance = CalculateCharDifference(pattern_string, closestMatch);
-                    result.Add((closestMatch, distance));
+                (string, int) closestMatch = FindClosestMatch(pattern_string, data);
+                if(closestMatch.Item1 != ""){
+                    //kalau gada yang sama, cari yang terdekat dengan hamming distance
+                    // dan masukan ke dalam result beserta distance-nya 
+                    int distanceEachChar = CalculateCharDifference(pattern_string, closestMatch.Item1);
+                    //untuk sekarang buat distancenya hammingDistance + perbedaan distance dari tiap karakter 
+                    result.Add((closestMatch.Item1, distanceEachChar + closestMatch.Item2));
                 }else{
                     Console.WriteLine($"{data} is not found. {pattern_string} is too long to compare");
                 }
             }
             else{
+                //kalau ketemu masukin ke dalam list dengan perbedaan karakter sebesar 0 
                 result.Add((data, 0));
             }
         }
@@ -121,7 +125,7 @@ class KnuthMorrisPratt {
         return Math.Abs(a - b);
     }
 
-    string FindClosestMatch(string pattern, string text) {
+    (string, int) FindClosestMatch(string pattern, string text) {
         int patternLength = pattern.Length;
         int textLength = text.Length;
         int minDifference = int.MaxValue;
@@ -136,8 +140,7 @@ class KnuthMorrisPratt {
                 closestMatch = substring;
             }
         }
-
-        return closestMatch;
+        return (closestMatch, minDifference);
     }
 
     public void generate_lps(string pattern, int length, int[] ans){

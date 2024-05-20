@@ -3,12 +3,9 @@ using System;
 class BoyerMoore
 {
 
-    public void ProcessAll(string pattern, string[] database)
-    {
-        foreach (var data in database)
-        {
-            if (BoyerMooreSearch(pattern, data) == -1)
-            {
+    public void ProcessAll(string pattern, string[] database){
+        foreach (var data in database){
+            if (BoyerMooreSearch(pattern, data) == -1){
                 string closestMatch = FindClosestMatch(pattern, data);
                 if(closestMatch != ""){
                     int distance = CalculateCharDifference(pattern, closestMatch);
@@ -17,15 +14,13 @@ class BoyerMoore
                     Console.WriteLine($"{data} is not found. {pattern} is too long to compare");
                 }
             }
-            else
-            {
+            else{
                 Console.WriteLine($"{pattern} found in {data}");
             }
         }
     }
 
-    int BoyerMooreSearch(string pattern, string text)
-    {
+    int BoyerMooreSearch(string pattern, string text){
         int m = pattern.Length;
         int n = text.Length;
 
@@ -33,8 +28,7 @@ class BoyerMoore
         int[] goodSuffix = BuildGoodSuffixTable(pattern);
 
         int s = 0;  // s is shift of the pattern with respect to text
-        while (s <= (n - m))
-        {
+        while (s <= (n - m)){
             int j = m - 1;
 
             // Keep reducing index j of pattern while characters of
@@ -57,8 +51,7 @@ class BoyerMoore
         return -1;
     }
 
-    int[] BuildBadCharacterTable(string pattern)
-    {
+    int[] BuildBadCharacterTable(string pattern){
         int[] badChar = new int[256];
         int m = pattern.Length;
 
@@ -73,8 +66,7 @@ class BoyerMoore
         return badChar;
     }
 
-    int[] BuildGoodSuffixTable(string pattern)
-    {
+    int[] BuildGoodSuffixTable(string pattern){
         int m = pattern.Length;
         int[] suffix = new int[m];
         int[] goodSuffix = new int[m];
@@ -92,24 +84,23 @@ class BoyerMoore
                 j = i;
         }
 
-        for (int i = 0; i < m; i++)
-        {
-            if (suffix[i] == m)
+        for (int i = 0; i < m; i++){
+            if(suffix[i] == m){
                 suffix[i] = i;
-            else
-                suffix[i] = m - suffix[i];
-        }
 
-        for (int i = 0; i < m - 1; i++)
-        {
+            }
+            else{
+                suffix[i] = m - suffix[i];
+            }
+        }
+        for (int i = 0; i < m - 1; i++){
             goodSuffix[m - 1 - suffix[i]] = m - 1 - i;
         }
 
         return goodSuffix;
     }
 
-    int CalculateCharDifference(string pattern, string text)
-    {
+    int CalculateCharDifference(string pattern, string text){
         int minLength = Math.Min(pattern.Length, text.Length);
         int differenceCount = 0;
 
@@ -122,13 +113,11 @@ class BoyerMoore
         return differenceCount;
     }
 
-    int CalculateCharDistance(char a, char b)
-    {
+    int CalculateCharDistance(char a, char b){
         return Math.Abs(a - b);
     }
 
-    string FindClosestMatch(string pattern, string text)
-    {
+    string FindClosestMatch(string pattern, string text){
         int patternLength = pattern.Length;
         int textLength = text.Length;
         int minDifference = int.MaxValue;
@@ -149,8 +138,7 @@ class BoyerMoore
         return closestMatch;
     }
 
-    int CalculateHammingDistance(string pattern, string text)
-    {
+    int CalculateHammingDistance(string pattern, string text){
         int minLength = Math.Min(pattern.Length, text.Length);
         int differenceCount = 0;
 

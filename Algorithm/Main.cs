@@ -19,7 +19,7 @@ class MainProgram
         string pattern = "AAA";
         int[] array_of_lps = new int[pattern.Length];
         kmp.generate_lps(pattern, pattern.Length, array_of_lps);
-        string[] database = { "AAA", "AXAB", "ACDABABCABAB", "ABCDABABABCABAB", "ABABABCABAB", "CCCAZA"};
+        string[] database = { "AAACLKJSDF", "FAXSDFFKFAFDB", "ACDSFSDFLFABBCSADFAFBAB", "AFCBCDSFLKFDADFAJFBASFAFHJBASDFFAB", "AFBAFFBAGJBSHGJDFFDCABGHJAB", "CCGHJCADFGJHGGJHA"};
         List<(string, int)> closestMatches = kmp.process_all(pattern, database, array_of_lps);
         foreach(var match in closestMatches) {
             Console.WriteLine($"Closest match: {match.Item1}, Character difference: {match.Item2}");
