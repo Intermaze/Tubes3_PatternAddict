@@ -1,20 +1,32 @@
-﻿// See https://aka.ms/new-console-template for more information
-using System;
- 
-class StringMatching {
+﻿using System;
+using System.Collections.Generic;
 
 
-    void process_all(string pattern_string, string[] database, int[] lps){
-        foreach(var data in database){
-            if(KMPSearch(pattern_string, data, lps) == false){  
+class KnuthMorrisPratt {
+
+    public List<(string, int)> process_all(string pattern_string, string[] database, int[] lps){
+        List<(string, int)> result = new List<(string, int)>();
+
+        foreach (var data in database){
+            bool patternFound = KMPSearch(pattern_string, data, lps);
+            if (!patternFound){
                 string closestMatch = FindClosestMatch(pattern_string, data);
-                int distance = CalculateCharDifference(pattern_string, closestMatch);
-                Console.Write($"{data} is not found. Closest match is {closestMatch} with {distance} character differences.");
-                // Console.Write(data + " is not found");
+                if(closestMatch != ""){
+                    int distance = CalculateCharDifference(pattern_string, closestMatch);
+                    result.Add((closestMatch, distance));
+                }else{
+                    Console.WriteLine($"{data} is not found. {pattern_string} is too long to compare");
+                }
             }
-            Console.WriteLine("");
+            else{
+                result.Add((data, 0));
+            }
         }
+
+        result = result.OrderBy(tuple => tuple.Item2).ToList();
+        return result;
     }
+
     bool KMPSearch(string pattern_string, string string_to_compare, int[] least_prefix_suffix){
         /*
             inisiasi panjang masing-masing array
@@ -31,10 +43,7 @@ class StringMatching {
             fungsi untuk membuat suffix_array daripattern_string
         */ 
         // generate_lps(pattern_string, first_length, suffix_array);
-        Console.Write("Suffix array: "); 
-        foreach(var item in least_prefix_suffix){
-            Console.Write(item + " ");
-        }
+        // Console.Write("Suffix array: "); 
 
         /*
             looping untuk melakukan perbandingan pada  kedua string
@@ -52,7 +61,7 @@ class StringMatching {
                 kalo idx_first sampai dengan panjangnya dari length dari pattern_string maka pattern ditemukan 
             */
             if (idx_first == first_length){
-                Console.Write(pattern_string + " Found pattern " + "at index " + (idx_second - idx_first));
+                // Console.Write(pattern_string + " Found pattern " + "at index " + (idx_second - idx_first));
                 idx_first = least_prefix_suffix[idx_first - 1];
                 return true;
             }
@@ -67,7 +76,6 @@ class StringMatching {
         return false;
     }
  
-
     /**
         basically  yang ini ngitung kayak huruf yang beda dari awal sampai akhir 
         jadi misal 
@@ -75,7 +83,7 @@ class StringMatching {
         dibandingin sama CDE 
         nah ini bedanya 3 karena beda semua 
     */
-    int CalculateHeuristicCharDifference(string pattern, string text) {
+    int CalculateHammingDistance(string pattern, string text) {
         int minLength = Math.Min(pattern.Length, text.Length);
         int differenceCount = 0;
 
@@ -113,7 +121,7 @@ class StringMatching {
         return Math.Abs(a - b);
     }
 
- string FindClosestMatch(string pattern, string text) {
+    string FindClosestMatch(string pattern, string text) {
         int patternLength = pattern.Length;
         int textLength = text.Length;
         int minDifference = int.MaxValue;
@@ -121,7 +129,7 @@ class StringMatching {
 
         for (int i = 0; i <= textLength - patternLength; i++) {
             string substring = text.Substring(i, patternLength);
-            int difference = CalculateHeuristicCharDifference(pattern, substring);
+            int difference = CalculateHammingDistance(pattern, substring);
 
             if (difference < minDifference) {
                 minDifference = difference;
@@ -132,7 +140,7 @@ class StringMatching {
         return closestMatch;
     }
 
-    void generate_lps(string pattern, int length, int[] ans){
+    public void generate_lps(string pattern, int length, int[] ans){
         int len = 0; 
         int idx = 1; 
 
@@ -152,15 +160,5 @@ class StringMatching {
                 }
             }
         }
-    }
-
-    // Driver program to test above function
-    public static void Main()
-    {
-        string pattern = "AAA";
-        int[] array_of_lps = new int[pattern.Length];
-        new StringMatching().generate_lps(pattern, pattern.Length, array_of_lps);
-        string[] database = { "ABCBDABCCDABCBCABCB", "ABAB", "ACDABABCABAB", "ABCDABABABCABAB", "ABABABCABAB", "CCCAZA"};
-        new StringMatching().process_all(pattern, database, array_of_lps);
     }
 }
