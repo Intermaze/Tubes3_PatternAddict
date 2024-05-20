@@ -1,3 +1,4 @@
+﻿// See https://aka.ms/new-console-template for more information
 using System;
  
 class StringMatching {
@@ -5,16 +6,15 @@ class StringMatching {
 
     void process_all(string pattern_string, string[] database, int[] lps){
         foreach(var data in database){
-            if(KMPSearch(pattern_string, data, lps) == false){
-                Console.Write(data + " is not found");
+            if(KMPSearch(pattern_string, data, lps) == false){  
+                string closestMatch = FindClosestMatch(pattern_string, data);
+                int distance = CalculateCharDifference(pattern_string, closestMatch);
+                Console.Write($"{data} is not found. Closest match is {closestMatch} with {distance} character differences.");
+                // Console.Write(data + " is not found");
             }
             Console.WriteLine("");
         }
     }
-
-
-    
-
     bool KMPSearch(string pattern_string, string string_to_compare, int[] least_prefix_suffix){
         /*
             inisiasi panjang masing-masing array
@@ -68,6 +68,70 @@ class StringMatching {
     }
  
 
+    /**
+        basically  yang ini ngitung kayak huruf yang beda dari awal sampai akhir 
+        jadi misal 
+        pattern AAA
+        dibandingin sama CDE 
+        nah ini bedanya 3 karena beda semua 
+    */
+    int CalculateHeuristicCharDifference(string pattern, string text) {
+        int minLength = Math.Min(pattern.Length, text.Length);
+        int differenceCount = 0;
+
+        for (int i = 0; i < minLength; i++) {
+            if (pattern[i] != text[i]) {
+                differenceCount++;
+            }
+        }
+        // Count the extra characters in the longer string as differences
+        differenceCount += Math.Abs(pattern.Length - text.Length);
+
+        return differenceCount;
+    }
+
+    /**
+        kalau yang ini bandinginnya jarak alfabet
+        jadi misal pattern A, tapi teksnya B 
+        nah ini jaraknya satu karena dari alfabet A -> B emang distance-nya satu 
+        kalau pattern A, tapi teksnya C 
+        distance-nya ya dua.
+    */
+    int CalculateCharDifference(string pattern, string text) {
+        int minLength = Math.Min(pattern.Length, text.Length);
+        int differenceCount = 0;
+
+        for (int i = 0; i < minLength; i++) {
+            differenceCount += CalculateCharDistance(pattern[i], text[i]);
+        }
+        differenceCount += Math.Abs(pattern.Length - text.Length);
+
+        return differenceCount;
+    }
+
+    int CalculateCharDistance(char a, char b) {
+        return Math.Abs(a - b);
+    }
+
+ string FindClosestMatch(string pattern, string text) {
+        int patternLength = pattern.Length;
+        int textLength = text.Length;
+        int minDifference = int.MaxValue;
+        string closestMatch = "";
+
+        for (int i = 0; i <= textLength - patternLength; i++) {
+            string substring = text.Substring(i, patternLength);
+            int difference = CalculateHeuristicCharDifference(pattern, substring);
+
+            if (difference < minDifference) {
+                minDifference = difference;
+                closestMatch = substring;
+            }
+        }
+
+        return closestMatch;
+    }
+
     void generate_lps(string pattern, int length, int[] ans){
         int len = 0; 
         int idx = 1; 
@@ -93,10 +157,10 @@ class StringMatching {
     // Driver program to test above function
     public static void Main()
     {
-        string pattern = "ABABCABAB";
+        string pattern = "AAA";
         int[] array_of_lps = new int[pattern.Length];
         new StringMatching().generate_lps(pattern, pattern.Length, array_of_lps);
-        string[] database = { "ABABDABACDABABCABAB", "ABAB", "ACDABABCABAB", "ABCDABABABCABAB", "ABABABCABAB" };
+        string[] database = { "ABCBDABCCDABCBCABCB", "ABAB", "ACDABABCABAB", "ABCDABABABCABAB", "ABABABCABAB", "CCCAZA"};
         new StringMatching().process_all(pattern, database, array_of_lps);
     }
 }
