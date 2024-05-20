@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 class KnuthMorrisPratt {
 
-    public List<(string, int)> process_all(string pattern_string, string[] database, int[] lps){
-        List<(string, int)> result = new List<(string, int)>();
+    public List<(string, string, int)> process_all(string pattern_string, string[] database, int[] lps){
+        List<(string, string, int)> result = new List<(string, string, int)>();
 
         foreach (var data in database){
             bool patternFound = KMPSearch(pattern_string, data, lps);
@@ -16,14 +16,14 @@ class KnuthMorrisPratt {
                     // dan masukan ke dalam result beserta distance-nya 
                     int distanceEachChar = CalculateCharDifference(pattern_string, closestMatch.Item1);
                     //untuk sekarang buat distancenya hammingDistance + perbedaan distance dari tiap karakter 
-                    result.Add((closestMatch.Item1, distanceEachChar + closestMatch.Item2));
+                    result.Add((closestMatch.Item1, data, distanceEachChar + closestMatch.Item2));
                 }else{
                     Console.WriteLine($"{data} is not found. {pattern_string} is too long to compare");
                 }
             }
             else{
                 //kalau ketemu masukin ke dalam list dengan perbedaan karakter sebesar 0 
-                result.Add((data, 0));
+                result.Add((pattern_string, data, 0));
             }
         }
 
@@ -122,7 +122,12 @@ class KnuthMorrisPratt {
     }
 
     int CalculateCharDistance(char a, char b) {
-        return Math.Abs(a - b);
+        int distance = Math.Abs(a - b);
+
+        // Consider circular distance
+        int circularDistance = Math.Min(distance, 128 - Math.Abs(a - b));
+        
+        return circularDistance;
     }
 
     (string, int) FindClosestMatch(string pattern, string text) {
