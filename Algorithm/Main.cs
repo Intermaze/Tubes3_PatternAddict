@@ -6,10 +6,17 @@ class MainProgram
     {
         // Boyer-Moore
         Console.WriteLine("Boyer-Moore: ");
+        BoyerMoore bm = new BoyerMoore(); 
         string patternBM = "AAA";
-        string[] databaseBM = { "ABCBDABCCDABCBCABCB", "ACXB", "ACDABABCABAB", "ABCDABABABCABAB", "ABABABCABAB", "CCCAZA"};
-        BoyerMoore bm = new BoyerMoore();
-        bm.ProcessAll(patternBM, databaseBM);
+        string[] databaseBM = { "ABCBDABCCDABCBCABCB", "AAAB", "ACDABABCABAB", "ABCDABABABCABAB", "ABABABCABAB", "CCCAZA"};
+        List<(string, string, int)> closestMatchBM = bm.ProcessAllBoyerMoore(patternBM, databaseBM);
+        foreach(var match in closestMatchBM){
+            if(match.Item3 == 0){
+                Console.WriteLine($"MATCH: {match.Item1}, text: {match.Item2}, Character difference: {match.Item3}");
+            }else{
+                Console.WriteLine($"Closest match: {match.Item1}, text: {match.Item2}, Character difference: {match.Item3}");
+            }
+        }
 
         Console.WriteLine("\n================================================\n");
 
@@ -19,7 +26,7 @@ class MainProgram
         string pattern = "???";
         int[] array_of_lps = new int[pattern.Length];
         kmp.generate_lps(pattern, pattern.Length, array_of_lps);
-        string[] database = { "A?ACL?KJSDF", "FAXSDFF???KFAFDB", "ACDSFS?DFL?:';FABBCSADFAFBAB", "AFCBCD?:>,SFLK{}:FDADFAJFBASFAFHJBASDFFAB", "AFBAFFBAGJ;',.][BSHGJDFFDCABGHJAB", "CCGH[];',.JCADFGJHGGJHA"};
+        string[] database = { "A?AL?KJSDF", "FAXSDFF???KFAFDB", "ACDSFS?DFL?:';FABBCSADFAFBAB", "AFCBCD?:>,SFLK{}:FDADFAJFBASFAFHJBASDFFAB", "AFBAFFBAGJ;',.][BSHGJDFFDCABGHJAB", "CCGH[];',.JCADFGJHGGJHA"};
         List<(string, string,  int)> closestMatches = kmp.process_all(pattern, database, array_of_lps);
         foreach(var match in closestMatches) {
             if(match.Item3 == 0){

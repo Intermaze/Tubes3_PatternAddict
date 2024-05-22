@@ -27,9 +27,10 @@ class KnuthMorrisPratt {
             }
         }
 
-        result = result.OrderBy(tuple => tuple.Item2).ToList();
+        result = result.OrderBy(tuple => tuple.Item3).ToList();
         return result;
     }
+    
 
     bool KMPSearch(string pattern_string, string string_to_compare, int[] least_prefix_suffix){
         /*
@@ -42,13 +43,6 @@ class KnuthMorrisPratt {
             buat sebuah array yang menampung suffix daripattern_stringg
         */
         int idx_first = 0; // index for handlingpattern_stringg
-
-        /*
-            fungsi untuk membuat suffix_array daripattern_string
-        */ 
-        // generate_lps(pattern_string, first_length, suffix_array);
-        // Console.Write("Suffix array: "); 
-
         /*
             looping untuk melakukan perbandingan pada  kedua string
         */

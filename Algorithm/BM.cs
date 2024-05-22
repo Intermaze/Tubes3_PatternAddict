@@ -3,21 +3,31 @@ using System;
 class BoyerMoore
 {
 
-    public void ProcessAll(string pattern, string[] database){
+    /*
+    hampir sama kayak KMP
+    */
+    public List<(string, string, int)> ProcessAllBoyerMoore(string pattern, string[] database){
+        List<(string, string, int)> result = new List<(string, string, int)>();
+
         foreach (var data in database){
-            if (BoyerMooreSearch(pattern, data) == -1){
+            int patternIndex = BoyerMooreSearch(pattern, data);
+            if (patternIndex == -1){
                 string closestMatch = FindClosestMatch(pattern, data);
-                if(closestMatch != ""){
-                    int distance = CalculateCharDifference(pattern, closestMatch);
-                    Console.WriteLine($"{data} is not found. Closest match is {closestMatch} with {distance} character differences.");
-                }else{
+                if (!string.IsNullOrEmpty(closestMatch)){
+                    int distanceEachChar = CalculateCharDifference(pattern, closestMatch);
+                    result.Add((closestMatch, data, distanceEachChar));
+                }
+                else{
                     Console.WriteLine($"{data} is not found. {pattern} is too long to compare");
                 }
             }
             else{
-                Console.WriteLine($"{pattern} found in {data}");
+                result.Add((pattern, data, 0));
             }
         }
+
+        result = result.OrderBy(tuple => tuple.Item3).ToList();
+        return result;
     }
 
     int BoyerMooreSearch(string pattern, string text){
@@ -55,11 +65,9 @@ class BoyerMoore
         int[] badChar = new int[256];
         int m = pattern.Length;
 
-        // Initialize all occurrences as -1
         for (int i = 0; i < 256; i++)
             badChar[i] = -1;
 
-        // Fill the actual value of last occurrence
         for (int i = 0; i < m; i++)
             badChar[(int)pattern[i]] = i;
 
@@ -100,6 +108,10 @@ class BoyerMoore
         return goodSuffix;
     }
 
+    /*
+    sama kayak yang di KMP, harusnya jadiin satu cuman bingung CS
+    ribet woey.
+    */
     int CalculateCharDifference(string pattern, string text){
         int minLength = Math.Min(pattern.Length, text.Length);
         int differenceCount = 0;
