@@ -40,9 +40,13 @@ class MainProgram
 
         Console.WriteLine("Regex: ");
         RegularExpression r = new RegularExpression();
-        string patternAlay = "h4ll0, n4m4 54y4 4d4l4h Br0h!";
-        string patternNormal = r.ConvertAlayToNormal(patternAlay);
+        string patternAlay = "H4Ll0, n4M4 54Y4 4d4l4h 1ndr4AA!";
         Console.WriteLine(patternAlay);
-        Console.WriteLine(patternNormal);
+        Console.WriteLine(r.ConvertAlayToNormal(patternAlay));
+        Console.WriteLine();
+        patternAlay = "b1ntN6 Dw mrthn";
+        Console.WriteLine(patternAlay);
+        Console.WriteLine(r.ConvertAlayToNormal(patternAlay));
+        
     }
 }
