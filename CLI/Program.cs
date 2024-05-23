@@ -1,6 +1,8 @@
 ﻿using Tubes3;
+using System.IO; 
 
-Converter.ImageToAscii("../Converter/test.jpg");
+Database.load_fingerprint(Path.Join("..", "Data"));
+// Converter.ImageToAscii("../Converter/test.jpg");
 //
 // // Boyer-Moore
 // Console.WriteLine("Boyer-Moore: ");

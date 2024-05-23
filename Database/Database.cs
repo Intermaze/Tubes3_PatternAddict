@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Microsoft.Data.Sqlite;
+using Tubes3; 
 
 namespace Tubes3
 {
@@ -57,9 +58,12 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
 
         public static void load_fingerprint(string path)
         {
+            int i = 0;
             foreach (var filename in Directory.GetFiles(path))
             {
-                Console.WriteLine(filename);
+                Console.Write(i++); Console.Write(": ");
+                Console.Write(Converter.ImageToAscii(filename));
+                Console.Write("|\n");
             }
             ;
         }
