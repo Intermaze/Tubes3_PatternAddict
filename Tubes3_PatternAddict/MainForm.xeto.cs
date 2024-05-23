@@ -10,18 +10,19 @@ namespace Tubes3_PatternAddict
     {
         public MainForm()
         {
+            Database.init();
             EventHandler<EventArgs> chooseFileDialog = (object o, EventArgs e) =>
-                    {
-                        String[] extensions = new String[] { "png", "jpg", "bmp" };
-                        var filter = new FileFilter("image", extensions);
+            {
+                String[] extensions = new String[] { "png", "jpg", "bmp" };
+                var filter = new FileFilter("image", extensions);
 
-                        var dialog = new OpenFileDialog();
-                        dialog.Filters.Add(filter);
-                        dialog.CurrentFilterIndex = 0;
-                        dialog.ShowDialog(this);
+                var dialog = new OpenFileDialog();
+                dialog.Filters.Add(filter);
+                dialog.CurrentFilterIndex = 0;
+                dialog.ShowDialog(this);
 
-                        Console.WriteLine(dialog.FileName);
-                    };
+                Console.WriteLine(dialog.FileName);
+            };
 
             Resizable = false;
             Content = new TableLayout
@@ -62,6 +63,5 @@ namespace Tubes3_PatternAddict
                 }
             };
         }
-
     }
 }
