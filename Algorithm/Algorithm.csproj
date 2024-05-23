@@ -7,6 +7,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.5" />
+  </ItemGroup>
+
   <!-- <ItemGroup>
       <Compile Include="KMP.cs" />
       <Compile Include="BM.cs" />

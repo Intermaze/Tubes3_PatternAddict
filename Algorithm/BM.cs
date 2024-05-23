@@ -13,7 +13,7 @@ class BoyerMoore
         foreach (var data in database){
             int patternIndex = BoyerMooreSearch(pattern, data);
             if (patternIndex == -1){
-                (string, int) closestMatch = Algo.FindClosestMatch(pattern, data);
+                (string, int) closestMatch = FindClosestMatch(pattern, data);
                 if (!string.IsNullOrEmpty(closestMatch.Item1)){
                     int distanceEachChar = Algo.CalculateCharDifference(pattern, closestMatch.Item1);
                     result.Add((closestMatch.Item1, data, distanceEachChar + closestMatch.Item2));
