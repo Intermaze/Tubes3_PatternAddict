@@ -1,7 +1,7 @@
 ﻿using System;
 using Eto.Forms;
 
-namespace Tubes3_PatternAddict.Wpf
+namespace GUI.Wpf
 {
     class Program
     {

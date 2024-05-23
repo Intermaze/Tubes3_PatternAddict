@@ -4,13 +4,12 @@ using Eto.Forms;
 
 delegate void Runnable();
 
-namespace Tubes3_PatternAddict
+namespace GUI
 {
     public class MainForm : Form
     {
         public MainForm()
         {
-            Database.init();
             EventHandler<EventArgs> chooseFileDialog = (object o, EventArgs e) =>
             {
                 String[] extensions = new String[] { "png", "jpg", "bmp" };

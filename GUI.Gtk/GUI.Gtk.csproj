@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Tubes3_PatternAddict\Tubes3_PatternAddict.csproj" />
+    <ProjectReference Include="..\GUI\GUI.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using Microsoft.Data.Sqlite;
 
-namespace Tubes3_PatternAddict
+namespace Database
 {
     class Database
     {

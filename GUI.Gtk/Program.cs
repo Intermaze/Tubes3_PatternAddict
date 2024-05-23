@@ -1,14 +1,14 @@
 ﻿using System;
 using Eto.Forms;
 
-namespace Tubes3_PatternAddict.Mac
+namespace GUI.Gtk
 {
     class Program
     {
         [STAThread]
         public static void Main(string[] args)
         {
-            new Application(Eto.Platforms.Mac64).Run(new MainForm());
+            new Application(Eto.Platforms.Gtk).Run(new MainForm());
         }
     }
 }
