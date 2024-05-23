@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
 ";
         private static SqliteConnection connection = null;
 
-        public static void init()
+        public static void Initialize()
         {
             using (Database.connection = new SqliteConnection("Data Source=data.db"))
             {
@@ -41,8 +41,63 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             }
         }
 
-        public static void insert_fingerprint(string name, string fingerprint)
+        public static void InsertBiodata(
+                    string name, 
+                    string birthDate, 
+                    string birthPlace, 
+                    string gender, 
+                    string bloodType, 
+                    string address, 
+                    string religion, 
+                    string maritalStatus, 
+                    string job, 
+                    string nationality)
         {
+            Database.connection.Open(); 
+            var command = Database.connection.CreateCommand(); 
+            command.CommandText = 
+            @"
+                INSERT INTO biodata (
+                    nama, 
+                    tempat_lahir, 
+                    tanggal_lahir, 
+                    jenis_kelamin, 
+                    golongan_darah, 
+                    alamat, 
+                    agama, 
+                    status_perkawinan, 
+                    pekerjaan, 
+                    kewarganegaraan
+                ) VALUES (
+                    $name, 
+                    $birthDate, 
+                    $birthPlace, 
+                    $gender, 
+                    $bloodType, 
+                    $address, 
+                    $religion, 
+                    $maritalStatus, 
+                    $job, 
+                    $nationality
+                );
+            ";
+
+            command.Parameters.AddWithValue("$name", name); 
+            command.Parameters.AddWithValue("$birthDate", birthDate); 
+            command.Parameters.AddWithValue("$birthPlace", birthPlace); 
+            command.Parameters.AddWithValue("$gender", gender); 
+            command.Parameters.AddWithValue("$bloodType", bloodType); 
+            command.Parameters.AddWithValue("$address", address); 
+            command.Parameters.AddWithValue("$religion", religion); 
+            command.Parameters.AddWithValue("$maritalStatus", maritalStatus); 
+            command.Parameters.AddWithValue("$job", job); 
+            command.Parameters.AddWithValue("$nationality", nationality);
+            
+            command.ExecuteNonQuery();
+        }
+        public static void InsertFingerprint(string name,  string fingerprint)
+        {
+            Database.connection.Open();
             var command = Database.connection.CreateCommand();
             command.CommandText =
                 @"
@@ -50,20 +105,23 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
 						VALUES ($name, $fingerprint); 
 						";
 
-            command.Parameters.AddWithValue("$name:", name);
+            command.Parameters.AddWithValue("$name", name);
             command.Parameters.AddWithValue("$fingerprint", fingerprint);
 
             command.ExecuteNonQuery();
         }
 
-        public static void load_fingerprint(string path)
+        public static void LoadFingerprint(string path)
         {
             int i = 0;
-            foreach (var filename in Directory.GetFiles(path))
+            foreach (var filepath in Directory.GetFiles(path))
             {
-                Console.Write(i++); Console.Write(": ");
-                Console.Write(Converter.ImageToAscii(filename));
-                Console.Write("|\n");
+                var filename = Path.GetFileNameWithoutExtension(filepath);
+
+                InsertFingerprint(filename, Converter.ImageToAscii(filepath));
+                Console.Write(i++);
+                Console.Write(": ");
+                Console.WriteLine(filename);
             }
             ;
         }

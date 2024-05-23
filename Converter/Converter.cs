@@ -8,7 +8,13 @@ namespace Tubes3
     {
         public static string ImageToAscii(string imagePath)
         {
-            using Image<Rgba32> image = Image.Load<Rgba32>(imagePath);
+            Image<Rgba32> image = null; 
+            try{
+                image = Image.Load<Rgba32>(imagePath);
+            }catch(SystemException){
+                return "";
+            }
+
             StringBuilder binaryStringBuilder = new StringBuilder();
 
             //ambil bagian tengah dari image
