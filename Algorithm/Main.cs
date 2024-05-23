@@ -4,6 +4,7 @@ class MainProgram
 {
     public static void Main()
     {
+        kmp.test();
         // Boyer-Moore
         Console.WriteLine("Boyer-Moore: ");
         BoyerMoore bm = new BoyerMoore(); 

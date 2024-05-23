@@ -50,6 +50,7 @@ public static class Algo{
                 closestMatch = substring;
             }
         }
+
         return (closestMatch, minDifference);
     }
 }

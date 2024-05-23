@@ -103,7 +103,7 @@ class KnuthMorrisPratt {
             }
         }
     }
-    public void test(){
+    public static void test(){
         using (var connection = new SqliteConnection("Data Source=hello.db"))
         {
             connection.Open();
