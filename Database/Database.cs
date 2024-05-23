@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.Data.Sqlite;
 
-namespace Database
+namespace Tubes3
 {
-    class Database
+    public class Database
     {
         private static string ddl =
             @"

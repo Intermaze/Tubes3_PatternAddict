@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Algorithm
+namespace Tubes3
 {
     public class KnuthMorrisPratt
     {

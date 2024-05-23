@@ -1,6 +1,6 @@
 using System;
 
-namespace Algorithm
+namespace Tubes3
 {
     public class BoyerMoore
     {

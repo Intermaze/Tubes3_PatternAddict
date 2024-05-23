@@ -1,7 +1,7 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace Algorithm
+namespace Tubes3
 {
     public class RegularExpression
     {
