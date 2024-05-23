@@ -1,5 +1,6 @@
 using System;
 
+
 class BoyerMoore
 {
 
@@ -12,10 +13,10 @@ class BoyerMoore
         foreach (var data in database){
             int patternIndex = BoyerMooreSearch(pattern, data);
             if (patternIndex == -1){
-                string closestMatch = FindClosestMatch(pattern, data);
-                if (!string.IsNullOrEmpty(closestMatch)){
-                    int distanceEachChar = CalculateCharDifference(pattern, closestMatch);
-                    result.Add((closestMatch, data, distanceEachChar));
+                (string, int) closestMatch = Algo.FindClosestMatch(pattern, data);
+                if (!string.IsNullOrEmpty(closestMatch.Item1)){
+                    int distanceEachChar = Algo.CalculateCharDifference(pattern, closestMatch.Item1);
+                    result.Add((closestMatch.Item1, data, distanceEachChar + closestMatch.Item2));
                 }
                 else{
                     Console.WriteLine($"{data} is not found. {pattern} is too long to compare");
@@ -30,7 +31,7 @@ class BoyerMoore
         return result;
     }
 
-    int BoyerMooreSearch(string pattern, string text){
+    private int BoyerMooreSearch(string pattern, string text){
         int m = pattern.Length;
         int n = text.Length;
 
@@ -61,7 +62,7 @@ class BoyerMoore
         return -1;
     }
 
-    int[] BuildBadCharacterTable(string pattern){
+    private int[] BuildBadCharacterTable(string pattern){
         int[] badChar = new int[256];
         int m = pattern.Length;
 
@@ -74,7 +75,7 @@ class BoyerMoore
         return badChar;
     }
 
-    int[] BuildGoodSuffixTable(string pattern){
+    private int[] BuildGoodSuffixTable(string pattern){
         int m = pattern.Length;
         int[] suffix = new int[m];
         int[] goodSuffix = new int[m];
@@ -106,63 +107,5 @@ class BoyerMoore
         }
 
         return goodSuffix;
-    }
-
-    /*
-    sama kayak yang di KMP, harusnya jadiin satu cuman bingung CS
-    ribet woey.
-    */
-    int CalculateCharDifference(string pattern, string text){
-        int minLength = Math.Min(pattern.Length, text.Length);
-        int differenceCount = 0;
-
-        for (int i = 0; i < minLength; i++)
-        {
-            differenceCount += CalculateCharDistance(pattern[i], text[i]);
-        }
-        differenceCount += Math.Abs(pattern.Length - text.Length);
-
-        return differenceCount;
-    }
-
-    int CalculateCharDistance(char a, char b){
-        return Math.Abs(a - b);
-    }
-
-    string FindClosestMatch(string pattern, string text){
-        int patternLength = pattern.Length;
-        int textLength = text.Length;
-        int minDifference = int.MaxValue;
-        string closestMatch = "";
-
-        for (int i = 0; i <= textLength - patternLength; i++)
-        {
-            string substring = text.Substring(i, patternLength);
-            int difference = CalculateHammingDistance(pattern, substring);
-
-            if (difference < minDifference)
-            {
-                minDifference = difference;
-                closestMatch = substring;
-            }
-        }
-
-        return closestMatch;
-    }
-
-    int CalculateHammingDistance(string pattern, string text){
-        int minLength = Math.Min(pattern.Length, text.Length);
-        int differenceCount = 0;
-
-        for (int i = 0; i < minLength; i++)
-        {
-            if (pattern[i] != text[i])
-            {
-                differenceCount++;
-            }
-        }
-        differenceCount += Math.Abs(pattern.Length - text.Length);
-
-        return differenceCount;
     }
 }
