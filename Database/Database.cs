@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.Data.Sqlite;
 
 namespace Tubes3
@@ -22,29 +23,45 @@ CREATE TABLE IF NOT EXISTS biodata (
 
 	
 CREATE TABLE IF NOT EXISTS sidik_jari (
-		berkas_citra TEXT,
-		nama VARCHAR(100)
+		nama VARCHAR(100),
+		berkas_citra TEXT
 );
 ";
+        private static SqliteConnection connection = null;
 
         public static void init()
         {
-            using (var connection = new SqliteConnection("Data Source=data.db"))
+            using (Database.connection = new SqliteConnection("Data Source=data.db"))
             {
-                connection.Open();
-                var command = connection.CreateCommand();
+                Database.connection.Open();
+                var command = Database.connection.CreateCommand();
                 command.CommandText = Database.ddl;
                 command.ExecuteNonQuery();
-
-                var command2 = connection.CreateCommand();
-                command2.CommandText =
-                    @"
-									INSERT INTO biodata (nama) VALUES ('indra');
-									";
-
-                int result = command2.ExecuteNonQuery();
-                Console.WriteLine(result);
             }
+        }
+
+        public static void insert_fingerprint(string name, string fingerprint)
+        {
+            var command = Database.connection.CreateCommand();
+            command.CommandText =
+                @"
+						INSERT INTO sidik_jari (nama, berkas_citra)
+						VALUES ($name, $fingerprint); 
+						";
+
+            command.Parameters.AddWithValue("$name:", name);
+            command.Parameters.AddWithValue("$fingerprint", fingerprint);
+
+            command.ExecuteNonQuery();
+        }
+
+        public static void load_fingerprint(string path)
+        {
+            foreach (var filename in Directory.GetFiles(path))
+            {
+                Console.WriteLine(filename);
+            }
+            ;
         }
     }
 }
