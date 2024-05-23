@@ -1,5 +1,5 @@
 namespace Tubes3{
-    public class User{
+    public class Biodata{
         public string nama  {get; set;} 
         public string tempat_lahir {get; set;} 
         public string tanggal_lahir {get; set;} 

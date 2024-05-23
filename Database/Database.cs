@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
 
         public static void Initialize()
         {
-            using (Database.connection = new SqliteConnection("Data Source=data.db"))
+            using (Database.connection = new SqliteConnection("Data Source=../data.db"))
             {
                 Database.connection.Open();
                 var command = Database.connection.CreateCommand();
@@ -41,17 +41,7 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             }
         }
 
-        public static void InsertBiodata(
-                    string name, 
-                    string birthDate, 
-                    string birthPlace, 
-                    string gender, 
-                    string bloodType, 
-                    string address, 
-                    string religion, 
-                    string maritalStatus, 
-                    string job, 
-                    string nationality)
+        public static void InsertBiodata(Biodata bio)
         {
             Database.connection.Open(); 
             var command = Database.connection.CreateCommand(); 
@@ -82,16 +72,16 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                 );
             ";
 
-            command.Parameters.AddWithValue("$name", name); 
-            command.Parameters.AddWithValue("$birthDate", birthDate); 
-            command.Parameters.AddWithValue("$birthPlace", birthPlace); 
-            command.Parameters.AddWithValue("$gender", gender); 
-            command.Parameters.AddWithValue("$bloodType", bloodType); 
-            command.Parameters.AddWithValue("$address", address); 
-            command.Parameters.AddWithValue("$religion", religion); 
-            command.Parameters.AddWithValue("$maritalStatus", maritalStatus); 
-            command.Parameters.AddWithValue("$job", job); 
-            command.Parameters.AddWithValue("$nationality", nationality);
+            command.Parameters.AddWithValue("$name", bio.nama); 
+            command.Parameters.AddWithValue("$birthDate", bio.tanggal_lahir); 
+            command.Parameters.AddWithValue("$birthPlace", bio.tempat_lahir); 
+            command.Parameters.AddWithValue("$gender", bio.jenis_kelamin); 
+            command.Parameters.AddWithValue("$bloodType", bio.golongan_darah); 
+            command.Parameters.AddWithValue("$address", bio.alamat); 
+            command.Parameters.AddWithValue("$religion", bio.agama); 
+            command.Parameters.AddWithValue("$maritalStatus", bio.status_perkawinan); 
+            command.Parameters.AddWithValue("$job", bio.pekerjaan); 
+            command.Parameters.AddWithValue("$nationality", bio.kewarganegaraan);
             
             command.ExecuteNonQuery();
         }
@@ -111,19 +101,5 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             command.ExecuteNonQuery();
         }
 
-        public static void LoadFingerprint(string path)
-        {
-            int i = 0;
-            foreach (var filepath in Directory.GetFiles(path))
-            {
-                var filename = Path.GetFileNameWithoutExtension(filepath);
-
-                InsertFingerprint(filename, Converter.ImageToAscii(filepath));
-                Console.Write(i++);
-                Console.Write(": ");
-                Console.WriteLine(filename);
-            }
-            ;
-        }
     }
 }
