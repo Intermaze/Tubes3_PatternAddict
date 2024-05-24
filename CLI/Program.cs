@@ -2,7 +2,7 @@
 using System.IO; 
 
 Database.Initialize(); 
-Database.FixFingerprint();
+Database.CompareFingerprint();
 
 // Converter.ImageToAscii("../Converter/test.jpg");
 //
