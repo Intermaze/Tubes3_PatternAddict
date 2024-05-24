@@ -7,7 +7,7 @@ namespace Tubes3
     {
         public List<(string, string, int)> process_all(
             string pattern_string,
-            string[] database,
+            List<string> database,
             int[] lps
         )
         {
@@ -16,34 +16,29 @@ namespace Tubes3
             foreach (var data in database)
             {
                 bool patternFound = KMPSearch(pattern_string, data, lps);
-                if (!patternFound)
+                if(patternFound) result.Add((pattern_string, data, 0));
+            }
+
+            if(result.Count() == 0){
+                foreach (var data in database)
                 {
+
                     (string, int) closestMatch = Util.FindClosestMatch(pattern_string, data);
                     if (closestMatch.Item1 != "")
                     {
                         //kalau gada yang sama, cari yang terdekat dengan hamming distance
                         // dan masukan ke dalam result beserta distance-nya
-                        int distanceEachChar = Util.CalculateCharDifference(
-                            pattern_string,
-                            closestMatch.Item1
-                        );
+                        // int distanceEachChar = Util.CalculateCharDifference(
+                        //     pattern_string,
+                        //     closestMatch.Item1
+                        // );
                         //untuk sekarang buat distancenya hammingDistance + perbedaan distance dari tiap karakter
                         result.Add(
-                            (closestMatch.Item1, data, distanceEachChar + closestMatch.Item2)
+                            // (closestMatch.Item1, data, closestMatch.Item2 + distanceEachChar)
+                            (closestMatch.Item1, data, closestMatch.Item2)
                         );
                     }
-                    else
-                    {
-                        Console.WriteLine(
-                            $"{data} is not found. {pattern_string} is too long to compare"
-                        );
-                    }
-                }
-                else
-                {
-                    //kalau ketemu masukin ke dalam list dengan perbedaan karakter sebesar 0
-                    result.Add((pattern_string, data, 0));
-                }
+                } 
             }
 
             result = result.OrderBy(tuple => tuple.Item3).ToList();

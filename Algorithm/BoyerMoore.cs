@@ -14,27 +14,23 @@ namespace Tubes3
             foreach (var data in database)
             {
                 int patternIndex = BoyerMooreSearch(pattern, data);
-                if (patternIndex == -1)
-                {
+                if (patternIndex != -1) result.Add((pattern, data, 0));
+
+            }
+
+            if(result.Count() == 0){
+                foreach (var data in database){
                     (string, int) closestMatch = Util.FindClosestMatch(pattern, data);
                     if (!string.IsNullOrEmpty(closestMatch.Item1))
                     {
-                        int distanceEachChar = Util.CalculateCharDifference(
-                            pattern,
-                            closestMatch.Item1
-                        );
+                        // int distanceEachChar = Util.CalculateCharDifference(
+                        //     pattern,
+                        //     closestMatch.Item1
+                        // );
                         result.Add(
-                            (closestMatch.Item1, data, distanceEachChar + closestMatch.Item2)
+                            (closestMatch.Item1, data, closestMatch.Item2)
                         );
                     }
-                    else
-                    {
-                        Console.WriteLine($"{data} is not found. {pattern} is too long to compare");
-                    }
-                }
-                else
-                {
-                    result.Add((pattern, data, 0));
                 }
             }
 
