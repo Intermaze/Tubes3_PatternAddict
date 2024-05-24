@@ -1,6 +1,8 @@
 ﻿using Tubes3;
 using System.IO; 
 
+Database.Initialize(); 
+Database.FixFingerprint();
 
 // Converter.ImageToAscii("../Converter/test.jpg");
 //
