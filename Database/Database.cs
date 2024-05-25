@@ -270,6 +270,7 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             kmp.generate_lps(image, image.Length, lcs); 
             List<(string, string, int)> result = kmp.process_all(image, listFingerprintString, lcs); //string dari fingerprint
             foreach(var fingerprint in  listFingerprintASCII){
+                Console.WriteLine(result.Count);
                 if(fingerprint.berkas_citra == result[0].Item1){
                     foreach(var biodata in listBiodata){
                         if(regex.IsMatch(fingerprint.nama, biodata.nama)){
