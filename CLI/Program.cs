@@ -1,18 +1,31 @@
-﻿using System.IO;
+using System.IO;
 using Tubes3;
 
 Database.Initialize();
-Database.FixFingerprint();
+while (true)
+{
+    Console.Write("Masukkan path berkas citra: ");
+    string basepath = "..\\Data";
+    string path = Console.ReadLine();
 
-// Database.CompareFingerprintKMP();
+    string wantToCompare = Converter.ImageToAsciiStraight(Path.Join(basepath, path));
 
-//** masukkan path **/
-
-Console.Write("Masukkan path berkas citra: ");
-string path = Console.ReadLine();
-
-string wantToCompare = Converter.ImageToAsciiStraight(path);
-
-Database.CompareFingerprintKMP();
-Database.CompareFingerprintBM();
-
+    Console.WriteLine("Pilih Algoritma: ");
+    Console.WriteLine("1. BM ");
+    Console.WriteLine("2. KMP ");
+    Console.Write("> ");
+    string choose = Console.ReadLine();
+    if (choose == "KMP")
+    {
+        Database.CompareFingerprintKMP(wantToCompare);
+    }
+    else if (choose == "BM")
+    {
+        Database.CompareFingerprintBM(wantToCompare);
+    }
+    else if (choose == "exit")
+    {
+        break;
+    }
+    Console.WriteLine("\n\n");
+}
