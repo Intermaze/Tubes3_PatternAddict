@@ -5,11 +5,12 @@ using System.IO;
 Database.Initialize(); 
 while(true){
     Console.Write("Masukkan path berkas citra: "); 
-    string basepath = "..\\Data";
+    string basepath = Path.Join("..", "Data");
     string path =  Console.ReadLine(); 
 
     string wantToCompare = Converter.ImageToAsciiStraight(Path.Join(basepath, path));
 
+    Console.WriteLine(wantToCompare.Length);
     Console.WriteLine("Pilih Algoritma: ");
     Console.WriteLine("1. BM ");
     Console.WriteLine("2. KMP ");

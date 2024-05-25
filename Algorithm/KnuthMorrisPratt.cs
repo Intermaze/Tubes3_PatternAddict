@@ -26,6 +26,7 @@ namespace Tubes3
                     (string, int) closestMatch = Util.FindClosestMatch(pattern_string, data);
                     if (closestMatch.Item1 != "")
                     {
+
                         //untuk sekarang buat distancenya hammingDistance + perbedaan distance dari tiap karakter
                         result.Add(
                             // (closestMatch.Item1, data, closestMatch.Item2 + distanceEachChar)
