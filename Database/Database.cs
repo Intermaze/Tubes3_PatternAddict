@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration.Assemblies;
-using System.Linq;
 using Microsoft.Data.Sqlite;
 using Tubes3; 
 
@@ -120,6 +118,23 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
 
         }
 
+        public static void ChangeBiodataName(string from, string to){
+            Database.connection.Open();
+            var command = Database.connection.CreateCommand();
+            command.CommandText =
+                @"
+						UPDATE biodata
+                        SET nama = $to
+                        WHERE nama = $from;
+						";
+
+            command.Parameters.AddWithValue("$from", from);
+            command.Parameters.AddWithValue("$to", to);
+
+            command.ExecuteNonQuery();
+
+        }
+
         public static Fingerprint ParseFingerprint(SqliteDataReader r){
             var f = new Fingerprint(); 
             f.nama = (string)r["nama"];
@@ -197,7 +212,7 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             }
         }
 
-        public static void CompareFingerprint(){
+        public static void CompareFingerprintKMP(){
             //melakukan koneksi ke database
             Database.connection.Open(); 
             
@@ -236,7 +251,8 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             foreach (var fingerprint in listFingerprint){
                 listFingerprintString.Add(fingerprint.berkas_citra);
             }
-            
+
+            RegularExpression regex = new RegularExpression();
             KnuthMorrisPratt kmp = new KnuthMorrisPratt();  
             foreach (var fingerprint in listFingerprint){
                 //ALGORITMA: menggunakan algoritma KMP
@@ -246,11 +262,82 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                 foreach(var sidikJari in listFingerprint){
                     if(sidikJari.berkas_citra == result[0].Item1){
                         /*BAGIAN: buat nyari nama yang sesuai dari nama alay yang ada di table sidik_jari*/
-                        int[] lcsTempNama = new int[sidikJari.nama.Length];
-                        kmp.generate_lps(sidikJari.nama, fingerprint.nama.Length, lcsTempNama);
-                        List<(string, string, int)> resultNama = kmp.process_all(sidikJari.nama, listBiodataString, lcsTempNama);
-                        Console.WriteLine("Pemilik nama Asli: " + resultNama[0].Item1);
+
+                        foreach(var biodata in listBiodata){
+                            if(regex.IsMatch(sidikJari.nama, biodata.nama)){
+                                Console.WriteLine("Pemilik nama Asli: " + biodata.nama);
+                                break;
+                            }
+                        }
                         /*Didapat dari sidik jari yang ingin dicar dari fingerprint di dalam listFingerPrint*/
+                        // Console.WriteLine("Pemilik nama Asli: " + resultNama[0].Item1);
+                        Console.WriteLine("Pemilik nama Alay: " + sidikJari.nama);
+                        Console.WriteLine("Sidik jari: " + sidikJari.berkas_citra + " \ndatabase: " + result[0].Item2);
+                        Console.WriteLine();
+                        break;
+                    }
+                }
+            }
+        }
+
+        public static void CompareFingerprintBM(){
+            //melakukan koneksi ke database
+            Database.connection.Open(); 
+            
+            //Command untuk mengambil dari sidik jari
+            var commandFingerprint = Database.connection.CreateCommand();
+            commandFingerprint.CommandText = @"SELECT * FROM sidik_jari;";
+            var readerFingerprint = commandFingerprint.ExecuteReader();
+            
+            //Menambahkan ke list of Fingerprint
+            List<Fingerprint> listFingerprint= new List<Fingerprint>();
+            while(readerFingerprint.Read()){
+                Fingerprint fingerprint = ParseFingerprint(readerFingerprint);
+                listFingerprint.Add(fingerprint);
+            }
+
+            //Command untuk mengambil dari biodata
+            var commandBiodata = Database.connection.CreateCommand(); 
+            commandBiodata.CommandText = @"SELECT * FROM biodata;";
+            var readerBiodata = commandBiodata.ExecuteReader(); 
+            
+            //Menambahkan ke list of Biodata
+            List<Biodata> listBiodata = new List<Biodata>(); 
+            while(readerBiodata.Read()){
+                Biodata biodata = ParseBiodata(readerBiodata); 
+                listBiodata.Add(biodata);
+            }
+
+            //Mengubah list of Biodata menjadi list of String 
+            List<string> listBiodataString = new List<string>(); 
+            foreach(var bio in listBiodata){
+                listBiodataString.Add(bio.nama);
+            }
+
+            //Mengubah list of Fingerprint menjadi list of String
+            List<string> listFingerprintString = new List<string>(); 
+            foreach (var fingerprint in listFingerprint){
+                listFingerprintString.Add(fingerprint.berkas_citra);
+            }
+
+            RegularExpression regex = new RegularExpression();
+
+            BoyerMoore kmp = new BoyerMoore();  
+            foreach (var fingerprint in listFingerprint){
+                //ALGORITMA: menggunakan algoritma KMP
+                List<(string, string, int)> result = kmp.ProcessAllBoyerMoore(fingerprint.berkas_citra, listFingerprintString);
+                foreach(var sidikJari in listFingerprint){
+                    if(sidikJari.berkas_citra == result[0].Item1){
+                        /*BAGIAN: buat nyari nama yang sesuai dari nama alay yang ada di table sidik_jari*/
+
+                        foreach(var biodata in listBiodata){
+                            if(regex.IsMatch(sidikJari.nama, biodata.nama)){
+                                Console.WriteLine("Pemilik nama Asli: " + biodata.nama);
+                                break;
+                            }
+                        }
+                        /*Didapat dari sidik jari yang ingin dicar dari fingerprint di dalam listFingerPrint*/
+                        // Console.WriteLine("Pemilik nama Asli: " + resultNama[0].Item1);
                         Console.WriteLine("Pemilik nama Alay: " + sidikJari.nama);
                         Console.WriteLine("Sidik jari: " + sidikJari.berkas_citra + " \ndatabase: " + result[0].Item2);
                         Console.WriteLine();

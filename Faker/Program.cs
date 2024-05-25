@@ -36,12 +36,13 @@ foreach (var filepath in Directory.GetFiles(Path.Join("..", "Data"))){
 
     var alay_name = biodata.nama;
     foreach(var pair in data){
-        alay_name = alay_name.Replace(pair.Key, pair.Value);
+        // alay_name = alay_name.Replace(pair.Key, pair.Value);
+        biodata.nama = biodata.nama.Replace(pair.Key, pair.Value);
         // alay_name = alay_name.Remove(new Random().Next(0, alay_name.Length), 1);
     }
 
     Tubes3.Database.InsertBiodata(biodata);
-    Tubes3.Database.InsertFingerprint(alay_name, Converter.ImageToAscii(filepath));
+    Tubes3.Database.InsertFingerprint(alay_name, Converter.ImageToAsciiStraight(filepath));
 
     Console.Write(i++);
     Console.Write(": ");

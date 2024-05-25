@@ -15,6 +15,7 @@ namespace GUI
                 String[] extensions = new String[] { "png", "jpg", "bmp" };
                 var filter = new FileFilter("image", extensions);
 
+                Console.WriteLine("FUCK THIS SHIT");
                 var dialog = new OpenFileDialog();
                 dialog.Filters.Add(filter);
                 dialog.CurrentFilterIndex = 0;

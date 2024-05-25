@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Converter\Converter.csproj" Version="8.0.5" />
     <ProjectReference Include="..\Algorithm\Algorithm.csproj" Version="8.0.5" />
+    <!-- <ProjectReference Include="..\test\test.csproj" Version="8.0.5" /> -->
   </ItemGroup>
 
 
