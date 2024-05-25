@@ -34,7 +34,7 @@ foreach (var filepath in Directory.GetFiles(Path.Join("..", "Data"))){
     var filename = Path.GetFileNameWithoutExtension(filepath);
     var biodata = testBiodata.Generate();
 
-    var alay_name = biodata.nama;
+    var fingerprint_nama = biodata.nama;
     foreach(var pair in data){
         // alay_name = alay_name.Replace(pair.Key, pair.Value);
         biodata.nama = biodata.nama.Replace(pair.Key, pair.Value);
@@ -42,13 +42,13 @@ foreach (var filepath in Directory.GetFiles(Path.Join("..", "Data"))){
     }
 
     Tubes3.Database.InsertBiodata(biodata);
-    Tubes3.Database.InsertFingerprint(alay_name, Converter.ImageToAsciiStraight(filepath));
+    Tubes3.Database.InsertFingerprint(fingerprint_nama, filepath);
 
     Console.Write(i++);
     Console.Write(": ");
     Console.Write(biodata.nama);
     Console.Write(" | ");
-    Console.WriteLine(alay_name);
+    Console.WriteLine(fingerprint_nama);
 }
 
 var bro = testBiodata.Generate(); 

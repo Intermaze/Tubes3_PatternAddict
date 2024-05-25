@@ -212,7 +212,7 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             }
         }
 
-        public static void CompareFingerprintKMP(){
+        public static void CompareFingerprintKMP(string image){
             //melakukan koneksi ke database
             Database.connection.Open(); 
             
@@ -246,41 +246,62 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                 listBiodataString.Add(bio.nama);
             }
 
+            List<Fingerprint> listFingerprintASCII = new List<Fingerprint>(); 
+            foreach(var item in listFingerprint){
+                Fingerprint temp = new Fingerprint(){
+                    nama = item.nama,
+                    berkas_citra = Converter.ImageToAsciiStraight(item.berkas_citra)
+                }; 
+                listFingerprintASCII.Add(temp);
+            } 
+
             //Mengubah list of Fingerprint menjadi list of String
             List<string> listFingerprintString = new List<string>(); 
-            foreach (var fingerprint in listFingerprint){
+            foreach (var fingerprint in listFingerprintASCII){
                 listFingerprintString.Add(fingerprint.berkas_citra);
             }
 
             RegularExpression regex = new RegularExpression();
             KnuthMorrisPratt kmp = new KnuthMorrisPratt();  
-            foreach (var fingerprint in listFingerprint){
-                //ALGORITMA: menggunakan algoritma KMP
-                int[] lcsTemp = new int[fingerprint.berkas_citra.Length];
-                kmp.generate_lps(fingerprint.berkas_citra, fingerprint.berkas_citra.Length, lcsTemp);
-                List<(string, string, int)> result = kmp.process_all(fingerprint.berkas_citra, listFingerprintString, lcsTemp);
-                foreach(var sidikJari in listFingerprint){
-                    if(sidikJari.berkas_citra == result[0].Item1){
-                        /*BAGIAN: buat nyari nama yang sesuai dari nama alay yang ada di table sidik_jari*/
-
-                        foreach(var biodata in listBiodata){
-                            if(regex.IsMatch(sidikJari.nama, biodata.nama)){
-                                Console.WriteLine("Pemilik nama Asli: " + biodata.nama);
-                                break;
-                            }
+            string nama;
+            string path = null;
+            Biodata ans= null; 
+            int[] lcs = new int[image.Length]; 
+            kmp.generate_lps(image, image.Length, lcs); 
+            List<(string, string, int)> result = kmp.process_all(image, listFingerprintString, lcs); //string dari fingerprint
+            foreach(var fingerprint in  listFingerprintASCII){
+                if(fingerprint.berkas_citra == result[0].Item1){
+                    foreach(var biodata in listBiodata){
+                        if(regex.IsMatch(fingerprint.nama, biodata.nama)){
+                            Console.WriteLine("Nama alay: " + biodata.nama);
+                            ans = biodata;
+                            ans.nama = fingerprint.nama;
+                            break;
                         }
-                        /*Didapat dari sidik jari yang ingin dicar dari fingerprint di dalam listFingerPrint*/
-                        // Console.WriteLine("Pemilik nama Asli: " + resultNama[0].Item1);
-                        Console.WriteLine("Pemilik nama Alay: " + sidikJari.nama);
-                        Console.WriteLine("Sidik jari: " + sidikJari.berkas_citra + " \ndatabase: " + result[0].Item2);
-                        Console.WriteLine();
-                        break;
+                    } 
+                    foreach(var fingerpath in listFingerprint){
+                        if(fingerpath.nama == fingerprint.nama){
+                            path = fingerpath.berkas_citra; 
+                            break;
+                        }
                     }
+                    break;
                 }
+            }
+            if(ans != null && path != null){
+                Console.WriteLine("Path: " + path);
+                Console.WriteLine("Hasil: "); 
+                Console.WriteLine("Nama: " + ans.nama);
+                Console.WriteLine("Alamat: " + ans.alamat);
+                Console.WriteLine("pekerjaan: " + ans.pekerjaan);
+                Console.WriteLine("tanggal_lahir: " + ans.tanggal_lahir);
+                Console.WriteLine("tempat_lahir: " + ans.tempat_lahir);
+                Console.WriteLine("kewarganegaraan: " + ans.kewarganegaraan);
+                Console.WriteLine("agama: " + ans.agama);
             }
         }
 
-        public static void CompareFingerprintBM(){
+        public static void CompareFingerprintBM(string image){
             //melakukan koneksi ke database
             Database.connection.Open(); 
             
@@ -314,36 +335,58 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                 listBiodataString.Add(bio.nama);
             }
 
+            List<Fingerprint> listFingerprintASCII = new List<Fingerprint>(); 
+            foreach(var item in listFingerprint){
+                Fingerprint temp = new Fingerprint(){
+                    nama = item.nama,
+                    berkas_citra = Converter.ImageToAsciiStraight(item.berkas_citra)
+                }; 
+                listFingerprintASCII.Add(temp);
+            } 
+
             //Mengubah list of Fingerprint menjadi list of String
             List<string> listFingerprintString = new List<string>(); 
-            foreach (var fingerprint in listFingerprint){
+            foreach (var fingerprint in listFingerprintASCII){
                 listFingerprintString.Add(fingerprint.berkas_citra);
             }
 
             RegularExpression regex = new RegularExpression();
-
             BoyerMoore kmp = new BoyerMoore();  
-            foreach (var fingerprint in listFingerprint){
-                //ALGORITMA: menggunakan algoritma KMP
-                List<(string, string, int)> result = kmp.ProcessAllBoyerMoore(fingerprint.berkas_citra, listFingerprintString);
-                foreach(var sidikJari in listFingerprint){
-                    if(sidikJari.berkas_citra == result[0].Item1){
-                        /*BAGIAN: buat nyari nama yang sesuai dari nama alay yang ada di table sidik_jari*/
 
-                        foreach(var biodata in listBiodata){
-                            if(regex.IsMatch(sidikJari.nama, biodata.nama)){
-                                Console.WriteLine("Pemilik nama Asli: " + biodata.nama);
-                                break;
-                            }
+            string nama;
+            string path = null; 
+            Biodata ans= null; 
+            BoyerMoore bm = new BoyerMoore();
+            List<(string, string, int)> result = bm.ProcessAllBoyerMoore(image, listFingerprintString); //string dari fingerprint
+            foreach(var fingerprint in  listFingerprintASCII){
+                if(fingerprint.berkas_citra == result[0].Item1){
+                    foreach(var biodata in listBiodata){
+                        if(regex.IsMatch(fingerprint.nama, biodata.nama)){
+                            Console.WriteLine("Nama alay: " + biodata.nama);
+                            ans = biodata;
+                            ans.nama = fingerprint.nama;
+                            break;
                         }
-                        /*Didapat dari sidik jari yang ingin dicar dari fingerprint di dalam listFingerPrint*/
-                        // Console.WriteLine("Pemilik nama Asli: " + resultNama[0].Item1);
-                        Console.WriteLine("Pemilik nama Alay: " + sidikJari.nama);
-                        Console.WriteLine("Sidik jari: " + sidikJari.berkas_citra + " \ndatabase: " + result[0].Item2);
-                        Console.WriteLine();
-                        break;
+                    } 
+                    foreach(var fingerpath in listFingerprint){
+                        if(fingerpath.nama == fingerprint.nama){
+                            path = fingerpath.berkas_citra; 
+                            break;
+                        }
                     }
+                    break;
                 }
+            }
+            if(ans != null){
+                Console.WriteLine("path: " + path);
+                Console.WriteLine("Hasil: "); 
+                Console.WriteLine("Nama: " + ans.nama);
+                Console.WriteLine("Alamat: " + ans.alamat);
+                Console.WriteLine("pekerjaan: " + ans.pekerjaan);
+                Console.WriteLine("tanggal_lahir: " + ans.tanggal_lahir);
+                Console.WriteLine("tempat_lahir: " + ans.tempat_lahir);
+                Console.WriteLine("kewarganegaraan: " + ans.kewarganegaraan);
+                Console.WriteLine("agama: " + ans.agama);
             }
         }
 
