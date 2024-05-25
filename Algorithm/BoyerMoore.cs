@@ -7,7 +7,7 @@ namespace Tubes3
         /*
         hampir sama kayak KMP
         */
-        public List<(string, string, int)> ProcessAllBoyerMoore(string pattern, string[] database)
+        public List<(string, string, int)> ProcessAllBoyerMoore(string pattern, List<string> database)
         {
             List<(string, string, int)> result = new List<(string, string, int)>();
 
@@ -23,10 +23,6 @@ namespace Tubes3
                     (string, int) closestMatch = Util.FindClosestMatch(pattern, data);
                     if (!string.IsNullOrEmpty(closestMatch.Item1))
                     {
-                        // int distanceEachChar = Util.CalculateCharDifference(
-                        //     pattern,
-                        //     closestMatch.Item1
-                        // );
                         result.Add(
                             (closestMatch.Item1, data, closestMatch.Item2)
                         );
@@ -59,7 +55,6 @@ namespace Tubes3
                 // If the pattern is present at the current shift, then index j will become -1 after the above loop
                 if (j < 0)
                 {
-                    Console.WriteLine($"Pattern occurs at shift = {s}");
                     s += (s + m < n) ? m - badChar[text[s + m]] : 1;
                     return s;
                 }
