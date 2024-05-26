@@ -19,7 +19,6 @@ namespace Tubes3
                 if(patternFound) result.Add((pattern_string, data, 0));
             }
 
-            Console.WriteLine(database.Count);
             if(result.Count() == 0){
                 foreach (var data in database)
                 {
