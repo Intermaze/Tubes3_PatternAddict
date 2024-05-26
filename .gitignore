@@ -44,6 +44,4 @@ msbuild.log
 msbuild.err
 msbuild.wrn
 
-*.db
-
 Data/
