@@ -8,6 +8,9 @@
     <PackageReference Include="Eto.Forms" Version="2.8.3" />
     <PackageReference Include="Eto.Serialization.Xaml" Version="2.8.3" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.5" />
+    <ProjectReference Include="..\Database\Database.csproj" />
+    <ProjectReference Include="..\Converter\Converter.csproj" />
+    <ProjectReference Include="..\Algorithm\Algorithm.csproj" />
   </ItemGroup>
 
 </Project>

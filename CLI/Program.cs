@@ -4,6 +4,8 @@ using Tubes3;
 Database.Initialize();
 while (true)
 {
+    Biodata ans;
+    String pathAns;
     Console.Write("Masukkan path berkas citra: ");
     string basepath = "..\\Data";
     string path = Console.ReadLine();
@@ -17,11 +19,11 @@ while (true)
     string choose = Console.ReadLine();
     if (choose == "KMP")
     {
-        Database.CompareFingerprintKMP(wantToCompare);
+        (ans, pathAns) = Database.CompareFingerprintKMP(wantToCompare);
     }
     else if (choose == "BM")
     {
-        Database.CompareFingerprintBM(wantToCompare);
+        (ans, pathAns) = Database.CompareFingerprintBM(wantToCompare);
     }
     else if (choose == "exit")
     {

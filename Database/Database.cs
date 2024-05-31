@@ -212,7 +212,7 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             }
         }
 
-        public static void CompareFingerprintKMP(string image){
+        public static (Biodata, string) CompareFingerprintKMP(string image){
             //melakukan koneksi ke database
             Database.connection.Open(); 
             
@@ -298,10 +298,12 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                 Console.WriteLine("tempat_lahir: " + ans.tempat_lahir);
                 Console.WriteLine("kewarganegaraan: " + ans.kewarganegaraan);
                 Console.WriteLine("agama: " + ans.agama);
+                return (ans, path);
             }
+            return (null, null);
         }
 
-        public static void CompareFingerprintBM(string image){
+        public static (Biodata, string) CompareFingerprintBM(string image){
             //melakukan koneksi ke database
             Database.connection.Open(); 
             
@@ -387,7 +389,9 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                 Console.WriteLine("tempat_lahir: " + ans.tempat_lahir);
                 Console.WriteLine("kewarganegaraan: " + ans.kewarganegaraan);
                 Console.WriteLine("agama: " + ans.agama);
+                return (ans, path);
             }
+            return (null, null);
         }
 
     }
