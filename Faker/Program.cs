@@ -34,33 +34,35 @@ foreach (var filepath in Directory.GetFiles(Path.Join("..", "Data"))){
     var filename = Path.GetFileNameWithoutExtension(filepath);
     var biodata = testBiodata.Generate();
 
-    var alay_name = biodata.nama;
+    var fingerprint_nama = biodata.nama;
     foreach(var pair in data){
-        alay_name = alay_name.Replace(pair.Key, pair.Value);
+        // alay_name = alay_name.Replace(pair.Key, pair.Value);
+        biodata.nama = biodata.nama.Replace(pair.Key, pair.Value);
+        // alay_name = alay_name.Remove(new Random().Next(0, alay_name.Length), 1);
     }
 
     Tubes3.Database.InsertBiodata(biodata);
-    Tubes3.Database.InsertFingerprint(alay_name, Converter.ImageToAscii(filepath));
+    Tubes3.Database.InsertFingerprint(fingerprint_nama, filepath);
 
     Console.Write(i++);
     Console.Write(": ");
     Console.Write(biodata.nama);
     Console.Write(" | ");
-    Console.WriteLine(alay_name);
+    Console.WriteLine(fingerprint_nama);
 }
 
 var bro = testBiodata.Generate(); 
 
 
 
-Console.WriteLine(bro.jenis_kelamin);
-Console.WriteLine(bro.nama);
-Console.WriteLine(bro.tanggal_lahir);
-Console.WriteLine(bro.tempat_lahir);
-Console.WriteLine(bro.alamat);
-Console.WriteLine(bro.golongan_darah);
-Console.WriteLine(bro.agama);
-Console.WriteLine(bro.pekerjaan);
-Console.WriteLine(bro.status_perkawinan);
-Console.WriteLine(bro.kewarganegaraan);
+// Console.WriteLine(bro.jenis_kelamin);
+// Console.WriteLine(bro.nama);
+// Console.WriteLine(bro.tanggal_lahir);
+// Console.WriteLine(bro.tempat_lahir);
+// Console.WriteLine(bro.alamat);
+// Console.WriteLine(bro.golongan_darah);
+// Console.WriteLine(bro.agama);
+// Console.WriteLine(bro.pekerjaan);
+// Console.WriteLine(bro.status_perkawinan);
+// Console.WriteLine(bro.kewarganegaraan);
 

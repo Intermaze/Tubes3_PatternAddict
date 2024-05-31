@@ -7,34 +7,26 @@ namespace Tubes3
         /*
         hampir sama kayak KMP
         */
-        public List<(string, string, int)> ProcessAllBoyerMoore(string pattern, string[] database)
+        public List<(string, string, int)> ProcessAllBoyerMoore(string pattern, List<string> database)
         {
             List<(string, string, int)> result = new List<(string, string, int)>();
 
             foreach (var data in database)
             {
                 int patternIndex = BoyerMooreSearch(pattern, data);
-                if (patternIndex == -1)
-                {
+                if (patternIndex != -1) result.Add((pattern, data, 0));
+
+            }
+
+            if(result.Count() == 0){
+                foreach (var data in database){
                     (string, int) closestMatch = Util.FindClosestMatch(pattern, data);
                     if (!string.IsNullOrEmpty(closestMatch.Item1))
                     {
-                        int distanceEachChar = Util.CalculateCharDifference(
-                            pattern,
-                            closestMatch.Item1
-                        );
                         result.Add(
-                            (closestMatch.Item1, data, distanceEachChar + closestMatch.Item2)
+                            (closestMatch.Item1, data, closestMatch.Item2)
                         );
                     }
-                    else
-                    {
-                        Console.WriteLine($"{data} is not found. {pattern} is too long to compare");
-                    }
-                }
-                else
-                {
-                    result.Add((pattern, data, 0));
                 }
             }
 
@@ -63,7 +55,6 @@ namespace Tubes3
                 // If the pattern is present at the current shift, then index j will become -1 after the above loop
                 if (j < 0)
                 {
-                    Console.WriteLine($"Pattern occurs at shift = {s}");
                     s += (s + m < n) ? m - badChar[text[s + m]] : 1;
                     return s;
                 }
