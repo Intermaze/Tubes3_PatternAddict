@@ -6,7 +6,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>GUI</RootNamespace>
     <TargetFramework>net8.0</TargetFramework>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <!-- <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion> -->
     <AssemblyName>GUI</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -47,6 +47,9 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
+  <ItemGroup>
+  <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.5" />
+</ItemGroup>
   <ItemGroup>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
