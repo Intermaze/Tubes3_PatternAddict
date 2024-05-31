@@ -12,16 +12,16 @@ namespace GUI
         {
             EventHandler<EventArgs> chooseFileDialog = (object o, EventArgs e) =>
             {
-                // String[] extensions = new String[] { "png", "jpg", "bmp" };
-                // var filter = new FileFilter("image", extensions);
+                String[] extensions = new String[] { "png", "jpg", "bmp" };
+                var filter = new FileFilter("image", extensions);
 
-                // Console.WriteLine("FUCK THIS SHIT");
-                // var dialog = new OpenFileDialog();
-                // dialog.Filters.Add(filter);
-                // dialog.CurrentFilterIndex = 0;
-                // dialog.ShowDialog(this);
+                Console.WriteLine("FUCK THIS SHIT");
+                var dialog = new OpenFileDialog();
+                dialog.Filters.Add(filter);
+                dialog.CurrentFilterIndex = 0;
+                dialog.ShowDialog(this);
 
-                // Console.WriteLine(dialog.FileName);
+                Console.WriteLine(dialog.FileName);
             };
 
             Resizable = false;
