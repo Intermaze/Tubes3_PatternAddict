@@ -72,7 +72,7 @@ namespace Tubes3
                 if (idx_first == first_length)
                 {
                     // Console.Write(pattern_string + " Found pattern " + "at index " + (idx_second - idx_first));
-                    idx_first = least_prefix_suffix[idx_first - 1];
+                    // idx_first = least_prefix_suffix[idx_first - 1];
                     return true;
                 }
                 else if (
@@ -80,10 +80,8 @@ namespace Tubes3
                     && pattern_string[idx_first] != string_to_compare[idx_second]
                 )
                 {
-                    if (idx_first != 0)
-                        idx_first = least_prefix_suffix[idx_first - 1];
-                    else
-                        idx_second = idx_second + 1;
+                    if (idx_first != 0) idx_first = least_prefix_suffix[idx_first - 1];
+                    else idx_second = idx_second + 1;
                 }
             }
             return false;
@@ -115,14 +113,8 @@ namespace Tubes3
                 }
                 else
                 {
-                    if (len != 0)
-                    {
-                        len = ans[len - 1];
-                    }
-                    else
-                    {
-                        ans[idx++] = 0;
-                    }
+                    if (len != 0) len = ans[len - 1];
+                    else ans[idx++] = 0;
                 }
             }
         }

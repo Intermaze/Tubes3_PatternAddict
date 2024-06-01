@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace Tubes3
 {
@@ -46,21 +47,60 @@ namespace Tubes3
             while (s <= (n - m))
             {
                 int j = m - 1;
-
-                // Keep reducing index j of pattern while characters of
-                // pattern and text are matching at this shift s
-                while (j >= 0 && pattern[j] == text[s + j])
-                    j--;
-
-                // If the pattern is present at the current shift, then index j will become -1 after the above loop
+                while (j >= 0 && pattern[j] == text[s + j]) j--;
                 if (j < 0)
                 {
                     s += (s + m < n) ? m - badChar[text[s + m]] : 1;
                     return s;
                 }
+                else s += Math.Max(1, j - badChar[text[s + j]]);
+            }
+            return -1;
+        }
+        
+        private int BoyerMooreSearchGoodchar(string pattern, string text)
+        {
+            int m = pattern.Length;
+            int n = text.Length;
+
+            int[] badChar = BuildBadCharacterTable(pattern);
+            int[] goodSuffix = BuildGoodSuffixTable(pattern);
+
+            int s = 0; // s is the shift of the pattern with respect to the text
+            while (s <= (n - m))
+            {
+                int j = m - 1;
+                while (j >= 0 && pattern[j] == text[s + j]) j--;
+                if (j < 0) return s;
                 else
                 {
-                    s += Math.Max(1, j - badChar[text[s + j]]);
+                    // Calculate the shift with both bad character and good suffix rules
+                    s += Math.Max(1, Math.Max(j - badChar[text[s + j]], goodSuffix[j]));
+                }
+            }
+            return -1;
+        }
+        private int BoyerMooreSearchLookingGlass(string pattern, string text)
+        {
+            int m = pattern.Length;
+            int n = text.Length;
+
+            int[] lookingGlass = BuildLookingGlass(pattern);
+
+            int s = 0; 
+            while (s <= (n - m))
+            {
+                int j = m - 1;
+                while (j >= 0 && pattern[j] == text[s + j]) j--;
+                if (j < 0)
+                {
+                    s += (s + m < n) ? lookingGlass[0] : 1;
+                    return s;
+                }
+                else
+                {
+                    int lookingGlassShift = lookingGlass[j];
+                    s += lookingGlassShift;
                 }
             }
             return -1;
@@ -117,5 +157,22 @@ namespace Tubes3
 
             return goodSuffix;
         }
+    private int[] BuildLookingGlass(string pattern)
+    {
+        int[] lookingGlassTable = new int[pattern.Length];
+
+        for(int i = 0; i < pattern.Length; i++)
+        {
+            lookingGlassTable[i] = pattern.Length;
+        }
+
+        for (int i = 0; i < pattern.Length - 1; i++)
+        {
+            lookingGlassTable[pattern.Length - 1 - i] = Math.Min(lookingGlassTable[pattern.Length - 1 - i], i);
+        }
+
+        return lookingGlassTable;
     }
+    }
+
 }
