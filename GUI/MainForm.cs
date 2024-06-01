@@ -39,15 +39,17 @@ namespace GUI
                 dialog.CurrentFilterIndex = 0;
                 dialog.ShowDialog(this);
 
-                selectedImagePath = dialog.FileName;
-                Console.WriteLine(selectedImagePath);
+                Console.WriteLine(dialog.FileName);
 
-                if (imageView.Image != null)
+                if (!string.IsNullOrEmpty(dialog.FileName)) // Check if openFileDialog is canceled
                 {
-                    imageView.Image.Dispose(); // Dispose the previous image to release resources
+                    selectedImagePath = dialog.FileName;
+                    if (imageView.Image != null && !imageView.Image.IsDisposed)
+                    {
+                        imageView.Image.Dispose(); // Dispose the previous image to release resources
+                    }
+                    imageView.Image = new Bitmap(selectedImagePath);
                 }
-
-                imageView.Image = new Bitmap(selectedImagePath);
             };
 
             EventHandler<EventArgs> processAlgorithm = (object sender, EventArgs e) =>
@@ -69,15 +71,12 @@ namespace GUI
 
             EventHandler<EventArgs> search = async (object sender, EventArgs e) =>
             {
-                if (selectedImagePath == null)
+                if (string.IsNullOrEmpty(selectedImagePath))
                 {
                     Console.WriteLine("Please select an image first");
                     return;
                 }
-                string fileNameWithExtension = Path.GetFileName(selectedImagePath);
-                string basepath = "..\\Data";
-                string fullPath = Path.Combine(basepath, fileNameWithExtension);
-                string wantToCompare = Converter.ImageToAsciiStraight(fullPath);
+                string wantToCompare = Converter.ImageToAsciiStraight(selectedImagePath);
                 Console.WriteLine(wantToCompare);
                 if (isBM)
                 {
