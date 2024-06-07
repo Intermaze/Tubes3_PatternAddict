@@ -27,6 +27,14 @@ namespace GUI
         Biodata ans;
         string path;
 
+        Color[] colors = {
+            Color.FromRgb(0x577a76),
+            Color.FromRgb(0x8eadc5),
+            Color.FromRgb(0x8de1bd),
+            Color.FromRgb(0x9bdb87),
+            Color.FromRgb(0x7fba67)
+        };
+
         public MainForm()
         {
             Database.Initialize();
@@ -118,24 +126,25 @@ namespace GUI
             religionLabel = new Label { Text = "Agama: "};
             pathAns = new Label { Text = "Path: "};
 
-            inputImageView = new ImageView {Width = 200, BackgroundColor = Color.FromRgb(0xffff00)};
-            outputImageView = new ImageView {Width = 200, BackgroundColor = Color.FromRgb(0xbbff00)};
+            inputImageView = new ImageView {Width = 200};
+            outputImageView = new ImageView {Width = 200, BackgroundColor = colors[4]};
 
             var layout = new StackLayout{
-                HorizontalContentAlignment = HorizontalAlignment.Center
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                BackgroundColor = colors[0]
             };
             var row2 = new StackLayout
             {
                 Orientation = Orientation.Horizontal,
                 VerticalContentAlignment = VerticalAlignment.Stretch,
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                BackgroundColor = Color.FromRgb(0xFFF000)
+                BackgroundColor = colors[3]
             };
             var row3 = new StackLayout
             {
                 Orientation = Orientation.Horizontal,
                 VerticalContentAlignment = VerticalAlignment.Center,
-                BackgroundColor = Color.FromArgb(0, 200, 0, 200)
+                BackgroundColor = colors[1]
             };
 
             row2.Items.Add(new StackLayoutItem{
@@ -195,7 +204,7 @@ namespace GUI
                 new Label{
                 Text = "Aplikasi C# Tugas Besar 3 Strategi Algoritma 2023/2024",
                 TextAlignment = TextAlignment.Center,
-                BackgroundColor = Color.FromArgb(31, 107, 196, 80)
+                BackgroundColor = colors[2]
             }));
             layout.Items.Add(new StackLayoutItem{Control = row2, Expand = true});
             layout.Items.Add(new StackLayoutItem{Control = row3});

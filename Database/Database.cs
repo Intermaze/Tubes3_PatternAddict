@@ -263,7 +263,7 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
 
             RegularExpression regex = new RegularExpression();
             KnuthMorrisPratt kmp = new KnuthMorrisPratt();  
-            string nama;
+
             string path = null;
             Biodata ans= null; 
             int[] lcs = new int[image.Length]; 
@@ -355,7 +355,7 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             RegularExpression regex = new RegularExpression();
             BoyerMoore kmp = new BoyerMoore();  
 
-            string nama;
+
             string path = null; 
             Biodata ans= null; 
             BoyerMoore bm = new BoyerMoore();
