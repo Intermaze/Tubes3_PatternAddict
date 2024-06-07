@@ -39,6 +39,7 @@ namespace GUI
         {
             Database.Initialize();
             Size = new Size(800, 500);
+
             EventHandler<EventArgs> chooseFileDialog = (object o, EventArgs e) =>
             {
                 String[] extensions = new String[] { "png", "jpg", "bmp" };
@@ -128,8 +129,17 @@ namespace GUI
             religionLabel = CreateLabel("Agama: ", biodataFont);
             pathAns = CreateLabel("Path: ", biodataFont);
 
-            inputImageView = new ImageView {Width = 200};
-            outputImageView = new ImageView {Width = 200, BackgroundColor = colors[4]};
+            inputImageView = new ImageView 
+            {
+                Width = 200, 
+                Image = new Bitmap(Path.GetFullPath("../Assets/default.BMP"))
+            };
+            outputImageView = new ImageView 
+            {
+                Width = 200, 
+                Image = new Bitmap(Path.GetFullPath("../Assets/default.BMP")), 
+                BackgroundColor = colors[4]
+            };
 
             var row2 = new StackLayout
             {
