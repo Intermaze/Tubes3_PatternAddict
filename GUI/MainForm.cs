@@ -115,61 +115,57 @@ namespace GUI
 
             Resizable = false;
 
-            labelAlgorithm = new Label { Text = "Algorithm in use: BM" }; // Initialize labelAlgorithm
+            labelAlgorithm = CreateLabel("Algorithm in use: BM"); // Initialize labelAlgorithm
 
-            nameLabel = new Label { Text = "Nama: " };
-            addressLabel = new Label { Text = "Alamat: "};
-            jobLabel = new Label { Text = "Pekerjaan: "};
-            dobLabel = new Label { Text = "Tanggal Lahir: "};
-            pobLabel = new Label { Text = "Tempat Lahir: "};
-            nationalityLabel = new Label { Text = "Kewarganegaraan: "};
-            religionLabel = new Label { Text = "Agama: "};
-            pathAns = new Label { Text = "Path: "};
+            var biodataFont = new Font(SystemFont.Default, 10);
+
+            nameLabel = CreateLabel("Nama: ", biodataFont);
+            addressLabel = CreateLabel("Alamat: ", biodataFont);
+            jobLabel = CreateLabel("Pekerjaan: ", biodataFont);
+            dobLabel = CreateLabel("Tanggal Lahir: ", biodataFont);
+            pobLabel = CreateLabel("Tempat Lahir: ", biodataFont);
+            nationalityLabel = CreateLabel("Kewarganegaraan: ", biodataFont);
+            religionLabel = CreateLabel("Agama: ", biodataFont);
+            pathAns = CreateLabel("Path: ", biodataFont);
 
             inputImageView = new ImageView {Width = 200};
             outputImageView = new ImageView {Width = 200, BackgroundColor = colors[4]};
 
-            var layout = new StackLayout{
-                HorizontalContentAlignment = HorizontalAlignment.Center,
-                BackgroundColor = colors[0]
-            };
             var row2 = new StackLayout
             {
                 Orientation = Orientation.Horizontal,
                 VerticalContentAlignment = VerticalAlignment.Stretch,
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                BackgroundColor = colors[3]
+                BackgroundColor = colors[3],
+                Items = {
+                    inputImageView,
+                    outputImageView,
+                    new StackLayout {
+                            Orientation = Orientation.Vertical,
+                            Items =
+                            {
+                                nameLabel,
+                                addressLabel,
+                                jobLabel,
+                                dobLabel,
+                                pobLabel,
+                                nationalityLabel,
+                                religionLabel,
+                                pathAns
+                            },
+                            Width = 300,
+                            Padding = new Padding(8)
+                    }
+                }
             };
             var row3 = new StackLayout
             {
                 Orientation = Orientation.Horizontal,
                 VerticalContentAlignment = VerticalAlignment.Center,
-                BackgroundColor = colors[1]
+                BackgroundColor = colors[1],
+                Padding = new Padding(6),
+                Width = 650
             };
-
-            row2.Items.Add(new StackLayoutItem{
-                Control = inputImageView,
-                // Expand = true,
-            });
-            row2.Items.Add(new StackLayoutItem{
-                Control = outputImageView,
-            });
-            row2.Items.Add(new StackLayoutItem(
-                new TableLayout 
-                {
-                    Rows =
-                    {
-                        new TableRow(nameLabel),
-                        new TableRow(addressLabel),
-                        new TableRow(jobLabel),
-                        new TableRow(dobLabel),
-                        new TableRow(pobLabel),
-                        new TableRow(nationalityLabel),
-                        new TableRow(religionLabel),
-                        new TableRow(pathAns)
-                    }
-                }
-            ));
 
             row3.Items.Add(new StackLayoutItem(
                 new TableLayout{
@@ -180,35 +176,59 @@ namespace GUI
                             {
                                 Text = "Pilih Citra",
                                 Command = new Command(chooseFileDialog),
-                                Width = -1
+                                Width = 200,
+                                BackgroundColor = colors[3]
                             },
-                            new Button { Text = "BM/KMP", Command = new Command(processAlgorithm), Width = -1 },
-                            new Button { Text = "Search", Command = new Command(search), Width = -1 }
+                            new Button { 
+                                Text = "BM/KMP", 
+                                Command = new Command(processAlgorithm), 
+                                Width = 100,
+                                BackgroundColor = colors[3]
+                            },
+                            new Button { 
+                                Text = "Search", 
+                                Command = new Command(search), 
+                                Width = 100 ,
+                                BackgroundColor = colors[3]
+                            }
                         ),
-                    }
+                    },
                 }
             ));
 
-            row3.Items.Add(new StackLayoutItem(
+            row3.Items.Add(new StackLayout(
                 new TableLayout{
+                    Padding = new Padding(80, 0, 0, 0),
                     Rows =
                     {
                         new TableRow(labelAlgorithm),
-                        new TableRow(new Label { Text = "Waktu Pencarian: 0s" }),
-                        new TableRow(new Label { Text = "Presentase Kecocokan: 0%" })
+                        new TableRow(CreateLabel("Waktu Pencarian: 0s")),
+                        new TableRow(CreateLabel("Presentase Kecocokan: 0%" ))
                     }
                 }
             ));
 
-            layout.Items.Add(new StackLayoutItem(
-                new Label{
-                Text = "Aplikasi C# Tugas Besar 3 Strategi Algoritma 2023/2024",
-                TextAlignment = TextAlignment.Center,
-                BackgroundColor = colors[2]
-            }));
-            layout.Items.Add(new StackLayoutItem{Control = row2, Expand = true});
-            layout.Items.Add(new StackLayoutItem{Control = row3});
-            
+            Label Title = CreateLabel("Aplikasi C# Tugas Besar 3 Strategi Algoritma 2023/2024", new Font(SystemFont.Default, 12));
+
+            var layout = new StackLayout{
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                BackgroundColor = colors[0],
+                Items = {
+                    new StackLayout{
+                        Items = {Title},
+                        Padding = new Padding(10),
+                        BackgroundColor = colors[2],
+                        Width = 800,
+                        HorizontalContentAlignment = HorizontalAlignment.Center
+                    },
+                    new StackLayoutItem{
+                        Control = row2,
+                        Expand = true,
+                    },
+                    row3
+                }
+            };
+
             Content = layout;
         }
         void UpdateAlgorithmState(string algorithm)
@@ -240,6 +260,11 @@ namespace GUI
             }
 
             imageView.Image = new Bitmap(path);
+        }
+
+        private Label CreateLabel(string labelText, Font font = null)
+        {
+            return new Label { Text = labelText, Wrap = WrapMode.Word, Font = font ?? SystemFonts.Default()};
         }
     }
 }
