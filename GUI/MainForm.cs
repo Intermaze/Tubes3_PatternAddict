@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.IO;
 using System.Threading.Tasks;
 using Eto.Drawing;
@@ -10,7 +11,8 @@ namespace GUI
 {
     public class MainForm : Form
     {
-        ImageView imageView;
+        ImageView inputImageView;
+        ImageView outputImageView;
         Label nameLabel;
         Label addressLabel;
         Label jobLabel;
@@ -44,11 +46,7 @@ namespace GUI
                 if (!string.IsNullOrEmpty(dialog.FileName)) // Check if openFileDialog is canceled
                 {
                     selectedImagePath = dialog.FileName;
-                    if (imageView.Image != null && !imageView.Image.IsDisposed)
-                    {
-                        imageView.Image.Dispose(); // Dispose the previous image to release resources
-                    }
-                    imageView.Image = new Bitmap(selectedImagePath);
+                    SetImage(inputImageView, selectedImagePath);
                 }
             };
 
@@ -93,28 +91,17 @@ namespace GUI
                 // Update UI with the answer
                 if (ans != null)
                 {
-                    // Update labels with Biodata information
-                    nameLabel.Text = $"Nama: {ans.nama}";
-                    addressLabel.Text = $"Alamat: {ans.alamat}";
-                    jobLabel.Text = $"Pekerjaan: {ans.pekerjaan}";
-                    dobLabel.Text = $"Tanggal Lahir: {ans.tanggal_lahir}";
-                    pobLabel.Text = $"Tempat Lahir: {ans.tempat_lahir}";
-                    nationalityLabel.Text = $"Kewarganegaraan: {ans.kewarganegaraan}";
-                    religionLabel.Text = $"Agama: {ans.agama}";
-                    pathAns.Text = $"Path: {path}";
+                    UpdateBiodata(ans, Path.GetFullPath(path));
 
-                    // Set the image
-                    SetImage(selectedImagePath);
-                    
-                    // Show labels
-                    nameLabel.Visible = true;
-                    addressLabel.Visible = true;
-                    jobLabel.Visible = true;
-                    dobLabel.Visible = true;
-                    pobLabel.Visible = true;
-                    nationalityLabel.Visible = true;
-                    religionLabel.Visible = true;
-                    pathAns.Visible = true;
+                    // // Show labels
+                    // nameLabel.Visible = true;
+                    // addressLabel.Visible = true;
+                    // jobLabel.Visible = true;
+                    // dobLabel.Visible = true;
+                    // pobLabel.Visible = true;
+                    // nationalityLabel.Visible = true;
+                    // religionLabel.Visible = true;
+                    // pathAns.Visible = true;
                 }
             };
 
@@ -122,79 +109,98 @@ namespace GUI
 
             labelAlgorithm = new Label { Text = "Algorithm in use: BM" }; // Initialize labelAlgorithm
 
-            nameLabel = new Label { Text = "Nama: ", Visible = false };
-            addressLabel = new Label { Text = "Alamat: ", Visible = false };
-            jobLabel = new Label { Text = "Pekerjaan: ", Visible = false };
-            dobLabel = new Label { Text = "Tanggal Lahir: ", Visible = false };
-            pobLabel = new Label { Text = "Tempat Lahir: ", Visible = false };
-            nationalityLabel = new Label { Text = "Kewarganegaraan: ", Visible = false };
-            religionLabel = new Label { Text = "Agama: ", Visible = false };
-            pathAns = new Label { Text = "Path: ", Visible = false };
+            nameLabel = new Label { Text = "Nama: " };
+            addressLabel = new Label { Text = "Alamat: "};
+            jobLabel = new Label { Text = "Pekerjaan: "};
+            dobLabel = new Label { Text = "Tanggal Lahir: "};
+            pobLabel = new Label { Text = "Tempat Lahir: "};
+            nationalityLabel = new Label { Text = "Kewarganegaraan: "};
+            religionLabel = new Label { Text = "Agama: "};
+            pathAns = new Label { Text = "Path: "};
 
-            imageView = new ImageView { Height = 300 };
+            inputImageView = new ImageView {Width = 200, BackgroundColor = Color.FromRgb(0xffff00)};
+            outputImageView = new ImageView {Width = 200, BackgroundColor = Color.FromRgb(0xbbff00)};
 
-
-            Content = new TableLayout
-            {
-                Spacing = new Size(5, 5),
-                Padding = new Padding(10, 10, 10, 10),
-                Rows =
-                {
-                    new TableRow(
-                        new Label
-                        {
-                            Text = "Aplikasi C# Tugas Besar 3 Strategi Algoritma 2023/2024",
-                            TextAlignment = TextAlignment.Center
-                        }
-                    ),
-                    new TableRow(
-                        imageView, // Single ImageView
-                        new TableLayout 
-                        {
-                            Rows =
-                            {
-                                new TableRow(nameLabel),
-                                new TableRow(addressLabel),
-                                new TableRow(jobLabel),
-                                new TableRow(dobLabel),
-                                new TableRow(pobLabel),
-                                new TableRow(nationalityLabel),
-                                new TableRow(religionLabel),
-                                new TableRow(pathAns)
-                            }
-                        }
-                    ),
-                    new TableRow(
-                        new TableLayout
-                        {
-                            Rows =
-                            {
-                                new TableRow(
-                                    new Button
-                                    {
-                                        Text = "Pilih Citra",
-                                        Command = new Command(chooseFileDialog),
-                                        Width = -1
-                                    },
-                                    new Button { Text = "BM/KMP", Command = new Command(processAlgorithm), Width = -1 },
-                                    new Button { Text = "Search", Command = new Command(search), Width = -1 }
-                                ),
-                                new TableRow(
-                                    new TableLayout
-                                    {
-                                        Rows =
-                                        {
-                                            new TableRow(labelAlgorithm),
-                                            new TableRow(new Label { Text = "Waktu Pencarian: 0s" }),
-                                            new TableRow(new Label { Text = "Presentase Kecocokan: 0%" })
-                                        }
-                                    }
-                                )
-                            }
-                        }
-                    )
-                }
+            var layout = new StackLayout{
+                HorizontalContentAlignment = HorizontalAlignment.Center
             };
+            var row2 = new StackLayout
+            {
+                Orientation = Orientation.Horizontal,
+                VerticalContentAlignment = VerticalAlignment.Stretch,
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                BackgroundColor = Color.FromRgb(0xFFF000)
+            };
+            var row3 = new StackLayout
+            {
+                Orientation = Orientation.Horizontal,
+                VerticalContentAlignment = VerticalAlignment.Center,
+                BackgroundColor = Color.FromArgb(0, 200, 0, 200)
+            };
+
+            row2.Items.Add(new StackLayoutItem{
+                Control = inputImageView,
+                // Expand = true,
+            });
+            row2.Items.Add(new StackLayoutItem{
+                Control = outputImageView,
+            });
+            row2.Items.Add(new StackLayoutItem(
+                new TableLayout 
+                {
+                    Rows =
+                    {
+                        new TableRow(nameLabel),
+                        new TableRow(addressLabel),
+                        new TableRow(jobLabel),
+                        new TableRow(dobLabel),
+                        new TableRow(pobLabel),
+                        new TableRow(nationalityLabel),
+                        new TableRow(religionLabel),
+                        new TableRow(pathAns)
+                    }
+                }
+            ));
+
+            row3.Items.Add(new StackLayoutItem(
+                new TableLayout{
+                    Rows =
+                    {
+                        new TableRow(
+                            new Button
+                            {
+                                Text = "Pilih Citra",
+                                Command = new Command(chooseFileDialog),
+                                Width = -1
+                            },
+                            new Button { Text = "BM/KMP", Command = new Command(processAlgorithm), Width = -1 },
+                            new Button { Text = "Search", Command = new Command(search), Width = -1 }
+                        ),
+                    }
+                }
+            ));
+
+            row3.Items.Add(new StackLayoutItem(
+                new TableLayout{
+                    Rows =
+                    {
+                        new TableRow(labelAlgorithm),
+                        new TableRow(new Label { Text = "Waktu Pencarian: 0s" }),
+                        new TableRow(new Label { Text = "Presentase Kecocokan: 0%" })
+                    }
+                }
+            ));
+
+            layout.Items.Add(new StackLayoutItem(
+                new Label{
+                Text = "Aplikasi C# Tugas Besar 3 Strategi Algoritma 2023/2024",
+                TextAlignment = TextAlignment.Center,
+                BackgroundColor = Color.FromArgb(31, 107, 196, 80)
+            }));
+            layout.Items.Add(new StackLayoutItem{Control = row2, Expand = true});
+            layout.Items.Add(new StackLayoutItem{Control = row3});
+            
+            Content = layout;
         }
         void UpdateAlgorithmState(string algorithm)
         {
@@ -214,12 +220,12 @@ namespace GUI
                 religionLabel.Text = $"Agama: {biodata.agama}";
                 pathAns.Text = $"Path: {path}";
             }
-            SetImage(filePath);
+            SetImage(outputImageView, filePath);
         }
 
-        public void SetImage(string path)
+        public void SetImage(ImageView imageView, string path)
         {
-            if (imageView.Image != null)
+            if (imageView.Image != null && !inputImageView.Image.IsDisposed)
             {
                 imageView.Image.Dispose(); 
             }
