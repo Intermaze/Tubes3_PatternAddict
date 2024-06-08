@@ -267,7 +267,6 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             string path = null;
             string namaAlay = null;
             Biodata ans= null; 
-            long time = -1;
             int[] lcs = new int[image.Length]; 
             kmp.generate_lps(image, image.Length, lcs); 
             (List<(string, string, int)>, long) result = kmp.process_all(image, listFingerprintString, lcs); //string dari fingerprint
@@ -307,7 +306,7 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                 Console.WriteLine("tempat_lahir: " + ans.tempat_lahir);
                 Console.WriteLine("kewarganegaraan: " + ans.kewarganegaraan);
                 Console.WriteLine("agama: " + ans.agama);
-                return (ans, path, time, percentage);
+                return (ans, path, result.Item2, percentage);
             }
             return (null, null, -1, 0);
         }

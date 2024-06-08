@@ -29,6 +29,8 @@ namespace GUI
         Biodata ans;
         string path;
 
+        Label timeLabel;
+
         long time;
         float percentage;
 
@@ -134,7 +136,7 @@ namespace GUI
             nationalityLabel = CreateLabel("Kewarganegaraan: ", biodataFont);
             religionLabel = CreateLabel("Agama: ", biodataFont);
             pathAns = CreateLabel("Path: ", biodataFont);
-            labelPercentage = CreateLabel("Persentase Kecocokan: ");
+            timeLabel = CreateLabel("Waktu eksekusi: ");
 
             inputImageView = new ImageView 
             {
@@ -226,7 +228,7 @@ namespace GUI
                     Rows =
                     {
                         new TableRow(labelAlgorithm),
-                        new TableRow(CreateLabel("Waktu Pencarian: " + time)),
+                        new TableRow(timeLabel),
                         new TableRow(CreateLabel("Presentase Kecocokan: 0%" ))
                     }
                 }
@@ -272,6 +274,7 @@ namespace GUI
                 nationalityLabel.Text = $"Kewarganegaraan: {biodata.kewarganegaraan}";
                 religionLabel.Text = $"Agama: {biodata.agama}";
                 pathAns.Text = $"Path: {path}";
+                timeLabel.Text = $"Waktu eksekusi: {time} ms";
                 labelPercentage.Text = $"Persentase Kecocokan: {percentage}%";
                 Console.WriteLine("Fuck you: " + percentage);
             }
