@@ -8,10 +8,9 @@ namespace Tubes3
         /*
         hampir sama kayak KMP
         */
-        public (List<(string, string, int)>, long) ProcessAllBoyerMoore(string pattern, List<string> database)
+        public List<(string, string, int)> ProcessAllBoyerMoore(string pattern, List<string> database)
         {
             List<(string, string, int)> result = new List<(string, string, int)>();
-            var watch = System.Diagnostics.Stopwatch.StartNew();
             foreach (var data in database)
             {
                 int patternIndex = BoyerMooreSearch(pattern, data);
@@ -30,11 +29,10 @@ namespace Tubes3
                     }
                 }
             }
-            watch.Stop(); 
-            var elapsedMs = watch.ElapsedMilliseconds;
+
 
             result = result.OrderBy(tuple => tuple.Item3).ToList();
-            return (result, elapsedMs);
+            return result;
         }
 
         private int BoyerMooreSearch(string pattern, string text)

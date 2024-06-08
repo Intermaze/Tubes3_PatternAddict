@@ -198,8 +198,8 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                 /*MEMBANDINGKAN NAMANYA SAJA*/
                 int[] lcsTemp = new int[fingerprint.nama.Length];
                 kmp.generate_lps(fingerprint.nama, fingerprint.nama.Length, lcsTemp);
-                (List<(string, string, int)>, long) result = kmp.process_all(fingerprint.nama, listBiodataString, lcsTemp);
-                foreach(var item in result.Item1){
+                List<(string, string, int)> result = kmp.process_all(fingerprint.nama, listBiodataString, lcsTemp);
+                foreach(var item in result){
                     Console.WriteLine("Pattern: " + fingerprint.nama +  " | Closest Match: " + item.Item1 + " | Text: " + item.Item2 + " | distance: " + item.Item3);
                     break;
                 }
@@ -213,7 +213,7 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             }
         }
 
-        public static (Biodata, string, long, float) CompareFingerprintKMP(string image, string imageBin){
+        public static (Biodata, string, float) CompareFingerprintKMP(string image, string imageBin){
             //melakukan koneksi ke database
             Database.connection.Open(); 
             
@@ -269,9 +269,9 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             Biodata ans= null; 
             int[] lcs = new int[image.Length]; 
             kmp.generate_lps(image, image.Length, lcs); 
-            (List<(string, string, int)>, long) result = kmp.process_all(image, listFingerprintString, lcs); //string dari fingerprint
+            List<(string, string, int)> result = kmp.process_all(image, listFingerprintString, lcs); //string dari fingerprint
             foreach(var fingerprint in  listFingerprintASCII){
-                if(fingerprint.berkas_citra == result.Item1[0].Item1){
+                if(fingerprint.berkas_citra == result[0].Item1){
                     foreach(var biodata in listBiodata){
                         if(regex.IsMatch(fingerprint.nama, biodata.nama)){
                             Console.WriteLine("Nama alay: " + biodata.nama);
@@ -305,12 +305,12 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                 Console.WriteLine("tempat_lahir: " + ans.tempat_lahir);
                 Console.WriteLine("kewarganegaraan: " + ans.kewarganegaraan);
                 Console.WriteLine("agama: " + ans.agama);
-                return (ans, path, result.Item2, percentage);
+                return (ans, path, percentage);
             }
-            return (null, null, -1, 0);
+            return (null, null, 0);
         }
 
-        public static (Biodata, string, long, float) CompareFingerprintBM(string image, string imageBin){
+        public static (Biodata, string, float) CompareFingerprintBM(string image, string imageBin){
             //melakukan koneksi ke database
             Database.connection.Open(); 
             
@@ -368,9 +368,9 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             Biodata ans= null; 
             string namaAlay = null;
             BoyerMoore bm = new BoyerMoore();
-            (List<(string, string, int)>, long) result = bm.ProcessAllBoyerMoore(image, listFingerprintString); 
+            List<(string, string, int)> result = bm.ProcessAllBoyerMoore(image, listFingerprintString); 
             foreach(var fingerprint in  listFingerprintASCII){
-                if(fingerprint.berkas_citra == result.Item1[0].Item1){
+                if(fingerprint.berkas_citra == result[0].Item1){
                     foreach(var biodata in listBiodata){
                         if(regex.IsMatch(fingerprint.nama, biodata.nama)){
                             Console.WriteLine("Nama alay: " + biodata.nama);
@@ -406,9 +406,9 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                 Console.WriteLine("tempat_lahir: " + ans.tempat_lahir);
                 Console.WriteLine("kewarganegaraan: " + ans.kewarganegaraan);
                 Console.WriteLine("agama: " + ans.agama);
-                return (ans, path, result.Item2, percentage);
+                return (ans, path, percentage);
             }
-            return (null, null, -1, 0);
+            return (null, null, 0);
         }
 
     }
