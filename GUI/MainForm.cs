@@ -174,7 +174,7 @@ namespace GUI
                 VerticalContentAlignment = VerticalAlignment.Center,
                 BackgroundColor = colors[1],
                 Padding = new Padding(6),
-                Width = 650
+                Width = 800
             };
 
             row3.Items.Add(new StackLayoutItem(
@@ -186,20 +186,26 @@ namespace GUI
                             {
                                 Text = "Pilih Citra",
                                 Command = new Command(chooseFileDialog),
-                                Width = 200,
-                                BackgroundColor = colors[3]
+                                Width = 100,
+                                BackgroundColor = colors[0],
+                                Font = new Font(SystemFont.Bold, 11), 
+                                TextColor = colors[2]
                             },
                             new Button { 
                                 Text = "BM/KMP", 
                                 Command = new Command(processAlgorithm), 
                                 Width = 100,
-                                BackgroundColor = colors[3]
+                                BackgroundColor = colors[0],
+                                Font = new Font(SystemFont.Bold, 11),
+                                TextColor = colors[2]
                             },
                             new Button { 
                                 Text = "Search", 
                                 Command = new Command(search), 
                                 Width = 100 ,
-                                BackgroundColor = colors[3]
+                                BackgroundColor = colors[0],
+                                Font = new Font(SystemFont.Bold, 11),
+                                TextColor = colors[2]
                             }
                         ),
                     },
@@ -218,7 +224,7 @@ namespace GUI
                 }
             ));
 
-            Label Title = CreateLabel("Aplikasi C# Tugas Besar 3 Strategi Algoritma 2023/2024", new Font(SystemFont.Default, 12));
+            Label Title = CreateLabel("Aplikasi C# Tugas Besar 3 Strategi Algoritma 2023/2024", new Font(SystemFont.Bold, 14));
 
             var layout = new StackLayout{
                 HorizontalContentAlignment = HorizontalAlignment.Center,
@@ -276,5 +282,6 @@ namespace GUI
         {
             return new Label { Text = labelText, Wrap = WrapMode.Word, Font = font ?? SystemFonts.Default()};
         }
+
     }
 }
