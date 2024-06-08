@@ -212,7 +212,7 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             }
         }
 
-        public static (Biodata, string, long) CompareFingerprintKMP(string image){
+        public static (Biodata, string, long, float) CompareFingerprintKMP(string image){
             //melakukan koneksi ke database
             Database.connection.Open(); 
             
@@ -265,6 +265,7 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             KnuthMorrisPratt kmp = new KnuthMorrisPratt();  
 
             string path = null;
+            string namaAlay = null;
             Biodata ans= null; 
             long time = -1;
             int[] lcs = new int[image.Length]; 
@@ -275,6 +276,7 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                     foreach(var biodata in listBiodata){
                         if(regex.IsMatch(fingerprint.nama, biodata.nama)){
                             Console.WriteLine("Nama alay: " + biodata.nama);
+                            namaAlay = biodata.nama;
                             ans = biodata;
                             ans.nama = fingerprint.nama;
                             break;
@@ -289,6 +291,12 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                     break;
                 }
             }
+
+            string patternBinary = Util.ASCIItoBin(ans.nama);
+            string dataBinary = Util.ASCIItoBin(namaAlay);
+            float percentage = ((float)Util.CalculateHammingDistance(patternBinary, dataBinary) / 30) * 100;
+
+
             if(ans != null && path != null){
                 Console.WriteLine("Path: " + path);
                 Console.WriteLine("Hasil: "); 
@@ -299,12 +307,12 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                 Console.WriteLine("tempat_lahir: " + ans.tempat_lahir);
                 Console.WriteLine("kewarganegaraan: " + ans.kewarganegaraan);
                 Console.WriteLine("agama: " + ans.agama);
-                return (ans, path, time);
+                return (ans, path, time, percentage);
             }
-            return (null, null, -1);
+            return (null, null, -1, 0);
         }
 
-        public static (Biodata, string, long) CompareFingerprintBM(string image){
+        public static (Biodata, string, long, float) CompareFingerprintBM(string image){
             //melakukan koneksi ke database
             Database.connection.Open(); 
             
@@ -359,13 +367,15 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
 
             string path = null; 
             Biodata ans= null; 
+            string namaAlay = null;
             BoyerMoore bm = new BoyerMoore();
-            (List<(string, string, int)>, long) result = bm.ProcessAllBoyerMoore(image, listFingerprintString); //string dari fingerprint
+            (List<(string, string, int)>, long) result = bm.ProcessAllBoyerMoore(image, listFingerprintString); 
             foreach(var fingerprint in  listFingerprintASCII){
                 if(fingerprint.berkas_citra == result.Item1[0].Item1){
                     foreach(var biodata in listBiodata){
                         if(regex.IsMatch(fingerprint.nama, biodata.nama)){
                             Console.WriteLine("Nama alay: " + biodata.nama);
+                            namaAlay = biodata.nama;
                             ans = biodata;
                             ans.nama = fingerprint.nama;
                             break;
@@ -380,6 +390,10 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                     break;
                 }
             }
+            string patternBinary = Util.ASCIItoBin(ans.nama);
+            string dataBinary = Util.ASCIItoBin(namaAlay);
+            float percentage = ((float)Util.CalculateHammingDistance(patternBinary, dataBinary) / 30) * 100;
+
             if(ans != null){
                 Console.WriteLine("path: " + path);
                 Console.WriteLine("Hasil: "); 
@@ -390,9 +404,9 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                 Console.WriteLine("tempat_lahir: " + ans.tempat_lahir);
                 Console.WriteLine("kewarganegaraan: " + ans.kewarganegaraan);
                 Console.WriteLine("agama: " + ans.agama);
-                return (ans, path, result.Item2);
+                return (ans, path, result.Item2, percentage);
             }
-            return (null, null, -1);
+            return (null, null, -1, 0);
         }
 
     }

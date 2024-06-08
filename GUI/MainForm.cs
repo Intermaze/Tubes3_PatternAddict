@@ -23,11 +23,14 @@ namespace GUI
         Label pathAns;
         string selectedImagePath;
         Label labelAlgorithm;
+
+        Label labelPercentage;
         bool isBM = true;
         Biodata ans;
         string path;
 
         long time;
+        float percentage;
 
         Color[] colors = {
             Color.FromRgb(0x577a76),
@@ -91,19 +94,20 @@ namespace GUI
                 {
                     Console.WriteLine("Searching using BM algorithm");
                     Console.WriteLine(wantToCompare);
-                    (ans, path, time) = await Task.Run(() => Database.CompareFingerprintBM(wantToCompare));
+                    (ans, path, time, percentage) = await Task.Run(() => Database.CompareFingerprintBM(wantToCompare));
+                    Console.WriteLine(percentage);
                 }
                 else
                 {
                     Console.WriteLine("Searching using KMP algorithm");
-                    (ans, path, time) = await Task.Run(() => Database.CompareFingerprintKMP(wantToCompare));
+                    (ans, path, time, percentage) = await Task.Run(() => Database.CompareFingerprintKMP(wantToCompare));
                 }
                 
                 // Update UI with the answer
                 if (ans != null)
                 {
                     UpdateBiodata(ans, Path.GetFullPath(path));
-
+                     
                     // // Show labels
                     // nameLabel.Visible = true;
                     // addressLabel.Visible = true;
@@ -130,6 +134,7 @@ namespace GUI
             nationalityLabel = CreateLabel("Kewarganegaraan: ", biodataFont);
             religionLabel = CreateLabel("Agama: ", biodataFont);
             pathAns = CreateLabel("Path: ", biodataFont);
+            labelPercentage = CreateLabel("Persentase Kecocokan: ");
 
             inputImageView = new ImageView 
             {
@@ -267,6 +272,8 @@ namespace GUI
                 nationalityLabel.Text = $"Kewarganegaraan: {biodata.kewarganegaraan}";
                 religionLabel.Text = $"Agama: {biodata.agama}";
                 pathAns.Text = $"Path: {path}";
+                labelPercentage.Text = $"Persentase Kecocokan: {percentage}%";
+                Console.WriteLine("Fuck you: " + percentage);
             }
             SetImage(outputImageView, filePath);
         }

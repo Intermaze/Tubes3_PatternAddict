@@ -1,6 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-
+using System.Text;
 
 namespace Tubes3
 {
@@ -110,6 +110,18 @@ namespace Tubes3
             return (closestMatch, minDifference);
         }
 
+        public static string ASCIItoBin(string ASCII){
+            byte[] bytes = Encoding.ASCII.GetBytes(ASCII);
+            StringBuilder binary = new StringBuilder();
+
+            foreach (byte b in bytes)
+            {
+                binary.Append(Convert.ToString(b, 2).PadLeft(8, '0'));
+            }
+
+            return binary.ToString();
+        }
+        
         public static int CalculateLevenshteinDistance(string str1, string str2, int m, int n)
         {
             // Create a matrix to store the distances
