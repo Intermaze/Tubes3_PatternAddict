@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Eto.Drawing;
@@ -31,7 +32,7 @@ namespace GUI
 
         Label timeLabel;
 
-        long time;
+        int time;
         float percentage;
 
         Color[] colors = {
@@ -92,18 +93,22 @@ namespace GUI
                 }
                 string wantToCompare = Converter.ImageToAsciiStraight(selectedImagePath);
                 Console.WriteLine(wantToCompare);
+                Stopwatch watch = new Stopwatch();
+                watch.Start();
                 if (isBM)
                 {
                     Console.WriteLine("Searching using BM algorithm");
                     Console.WriteLine(wantToCompare);
-                    (ans, path, time, percentage) = await Task.Run(() => Database.CompareFingerprintBM(wantToCompare));
+                    (ans, path, percentage) = await Task.Run(() => Database.CompareFingerprintBM(wantToCompare));
                     Console.WriteLine(percentage);
                 }
                 else
                 {
                     Console.WriteLine("Searching using KMP algorithm");
-                    (ans, path, time, percentage) = await Task.Run(() => Database.CompareFingerprintKMP(wantToCompare));
+                    (ans, path, percentage) = await Task.Run(() => Database.CompareFingerprintKMP(wantToCompare));
                 }
+                watch.Stop();
+                time = (int)watch.Elapsed.TotalMilliseconds;
                 
                 // Update UI with the answer
                 if (ans != null)
