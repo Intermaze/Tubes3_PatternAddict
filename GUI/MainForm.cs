@@ -24,7 +24,7 @@ namespace GUI
         string selectedImagePath;
         Label labelAlgorithm;
 
-        Label labelPercentage;
+        Label percentageLabel;
         bool isBM = true;
         Biodata ans;
         string path;
@@ -136,7 +136,8 @@ namespace GUI
             nationalityLabel = CreateLabel("Kewarganegaraan: ", biodataFont);
             religionLabel = CreateLabel("Agama: ", biodataFont);
             pathAns = CreateLabel("Path: ", biodataFont);
-            timeLabel = CreateLabel("Waktu eksekusi: ");
+            timeLabel = CreateLabel("Waktu Eksekusi:");
+            percentageLabel = CreateLabel("Persentase Kecocokan:");
 
             inputImageView = new ImageView 
             {
@@ -229,7 +230,7 @@ namespace GUI
                     {
                         new TableRow(labelAlgorithm),
                         new TableRow(timeLabel),
-                        new TableRow(CreateLabel("Presentase Kecocokan: 0%" ))
+                        new TableRow(percentageLabel)
                     }
                 }
             ));
@@ -274,8 +275,8 @@ namespace GUI
                 nationalityLabel.Text = $"Kewarganegaraan: {biodata.kewarganegaraan}";
                 religionLabel.Text = $"Agama: {biodata.agama}";
                 pathAns.Text = $"Path: {path}";
-                timeLabel.Text = $"Waktu eksekusi: {time} ms";
-                labelPercentage.Text = $"Persentase Kecocokan: {percentage}%";
+                timeLabel.Text = $"Waktu Eksekusi: {time} ms";
+                percentageLabel.Text = $"Persentase Kecocokan: {percentage}%";
                 Console.WriteLine("Fuck you: " + percentage);
             }
             SetImage(outputImageView, filePath);

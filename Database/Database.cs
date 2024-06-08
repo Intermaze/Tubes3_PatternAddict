@@ -391,7 +391,7 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             }
             string patternBinary = Util.ASCIItoBin(ans.nama);
             string dataBinary = Util.ASCIItoBin(namaAlay);
-            float percentage = ((float)Util.CalculateHammingDistance(patternBinary, dataBinary) / 30) * 100;
+            float percentage =  (float)Util.CalculateHammingDistance(patternBinary, dataBinary) ;
 
             if(ans != null){
                 Console.WriteLine("path: " + path);
