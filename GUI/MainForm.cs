@@ -225,7 +225,7 @@ namespace GUI
                 }
             ));
 
-            Label Title = CreateLabel("Aplikasi C# Tugas Besar 3 Strategi Algoritma 2023/2024", new Font(SystemFont.Bold, 14));
+            Label Title = CreateLabel("Aplikasi C# Tugas Besar 3 Strategi Algoritma 2023/2024", new Font(SystemFont.Bold, 14)); 
 
             var layout = new StackLayout{
                 HorizontalContentAlignment = HorizontalAlignment.Center,
@@ -281,7 +281,7 @@ namespace GUI
 
         private Label CreateLabel(string labelText, Font font = null)
         {
-            return new Label { Text = labelText, Wrap = WrapMode.Word, Font = font ?? SystemFonts.Default()};
+            return new Label { Text = labelText, Wrap = WrapMode.Word, Font = font ?? SystemFonts.Default(), TextColor = Color.FromRgb(0x000000)};
         }
 
     }
