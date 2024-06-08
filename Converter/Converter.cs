@@ -55,6 +55,34 @@ namespace Tubes3
             return asciiStringBuilder.ToString();
         }
 
+        public static string ImageToBin(string imagePath){
+           Image<Rgba32> image = null; 
+            try{
+                image = Image.Load<Rgba32>(imagePath);
+            }catch(SystemException){
+                return "";
+            }
+
+            StringBuilder binaryStringBuilder = new StringBuilder();
+
+            //ambil bagian tengah dari image
+            int startX = Math.Max((image.Width - 30) / 2, 0);
+            int startY = Math.Max(image.Height / 2, 0);
+            int width = Math.Min(30, image.Width);
+
+            //proses pixelnya 30x30
+            //ngambil yang tengah-tengah aja
+            for (int x = startX; x < startX + width; x++)
+            {
+                    //ambil pixel-pixelnya
+                var pixel = image[x, startY];
+                int grayValue = (int)((pixel.R + pixel.G + pixel.B) / 3.0);
+                binaryStringBuilder.Append(grayValue > 128 ? '1' : '0');
+            }
+
+            //convert Ke binaryString
+            return binaryStringBuilder.ToString(); 
+        }
         public static string ImageToAsciiStraight(string imagePath){
            Image<Rgba32> image = null; 
             try{

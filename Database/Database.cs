@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using Microsoft.Data.Sqlite;
 using Tubes3; 
 
@@ -212,7 +213,7 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             }
         }
 
-        public static (Biodata, string, long, float) CompareFingerprintKMP(string image){
+        public static (Biodata, string, long, float) CompareFingerprintKMP(string image, string imageBin){
             //melakukan koneksi ke database
             Database.connection.Open(); 
             
@@ -265,7 +266,6 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             KnuthMorrisPratt kmp = new KnuthMorrisPratt();  
 
             string path = null;
-            string namaAlay = null;
             Biodata ans= null; 
             int[] lcs = new int[image.Length]; 
             kmp.generate_lps(image, image.Length, lcs); 
@@ -275,7 +275,6 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                     foreach(var biodata in listBiodata){
                         if(regex.IsMatch(fingerprint.nama, biodata.nama)){
                             Console.WriteLine("Nama alay: " + biodata.nama);
-                            namaAlay = biodata.nama;
                             ans = biodata;
                             ans.nama = fingerprint.nama;
                             break;
@@ -291,10 +290,10 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                 }
             }
 
-            string patternBinary = Util.ASCIItoBin(ans.nama);
-            string dataBinary = Util.ASCIItoBin(namaAlay);
-            float percentage = ((float)Util.CalculateHammingDistance(patternBinary, dataBinary) / 30) * 100;
 
+            float percentage; 
+            string patternBin = Converter.ImageToBin(path); 
+            percentage = (float)(30 - Util.CalculateHammingDistance(patternBin, imageBin)) / 30 * 100;
 
             if(ans != null && path != null){
                 Console.WriteLine("Path: " + path);
@@ -311,7 +310,7 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             return (null, null, -1, 0);
         }
 
-        public static (Biodata, string, long, float) CompareFingerprintBM(string image){
+        public static (Biodata, string, long, float) CompareFingerprintBM(string image, string imageBin){
             //melakukan koneksi ke database
             Database.connection.Open(); 
             
@@ -360,9 +359,10 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                 listFingerprintString.Add(fingerprint.berkas_citra);
             }
 
+
+
             RegularExpression regex = new RegularExpression();
             BoyerMoore kmp = new BoyerMoore();  
-
 
             string path = null; 
             Biodata ans= null; 
@@ -389,10 +389,13 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                     break;
                 }
             }
-            string patternBinary = Util.ASCIItoBin(ans.nama);
-            string dataBinary = Util.ASCIItoBin(namaAlay);
-            float percentage =  (float)Util.CalculateHammingDistance(patternBinary, dataBinary) ;
-
+            // string patternBinary = Util.ASCIItoBin(ans.nama);
+            // string dataBinary = Util.ASCIItoBin(namaAlay);
+            float percentage; 
+            string patternBin = Converter.ImageToBin(path); 
+            percentage = (float)(30 - Util.CalculateHammingDistance(patternBin, imageBin)) / 30 * 100;
+            
+            
             if(ans != null){
                 Console.WriteLine("path: " + path);
                 Console.WriteLine("Hasil: "); 

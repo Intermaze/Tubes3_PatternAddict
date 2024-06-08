@@ -96,13 +96,13 @@ namespace GUI
                 {
                     Console.WriteLine("Searching using BM algorithm");
                     Console.WriteLine(wantToCompare);
-                    (ans, path, time, percentage) = await Task.Run(() => Database.CompareFingerprintBM(wantToCompare));
+                    (ans, path, time, percentage) = await Task.Run(() => Database.CompareFingerprintBM(wantToCompare, Converter.ImageToBin(selectedImagePath)));
                     Console.WriteLine(percentage);
                 }
                 else
                 {
                     Console.WriteLine("Searching using KMP algorithm");
-                    (ans, path, time, percentage) = await Task.Run(() => Database.CompareFingerprintKMP(wantToCompare));
+                    (ans, path, time, percentage) = await Task.Run(() => Database.CompareFingerprintKMP(wantToCompare, Converter.ImageToBin(selectedImagePath)));
                 }
                 
                 // Update UI with the answer
