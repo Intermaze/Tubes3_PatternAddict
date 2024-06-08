@@ -5,14 +5,15 @@ namespace Tubes3
 {
     public class KnuthMorrisPratt
     {
-        public List<(string, string, int)> process_all(
+        public (List<(string, string, int)>, long) process_all(
             string pattern_string,
             List<string> database,
             int[] lps
         )
         {
             List<(string, string, int)> result = new List<(string, string, int)>();
-
+            
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             foreach (var data in database)
             {
                 bool patternFound = KMPSearch(pattern_string, data, lps);
@@ -36,8 +37,11 @@ namespace Tubes3
                 } 
             }
 
+            watch.Stop(); 
+
+            var elapsedMs = watch.ElapsedMilliseconds;
             result = result.OrderBy(tuple => tuple.Item3).ToList();
-            return result;
+            return (result, elapsedMs);
         }
 
         bool KMPSearch(string pattern_string, string string_to_compare, int[] least_prefix_suffix)
@@ -100,11 +104,10 @@ namespace Tubes3
             int len = 0;
             int idx = 1;
 
-            ans[0] = 0; // substring idx = 0 selalu 0 lps-nya
+            ans[0] = 0; 
 
             while (idx < length)
             {
-                //kalo pattern-nya sama
                 if (pattern[idx] == pattern[len])
                 {
                     len++;

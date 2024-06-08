@@ -27,6 +27,8 @@ namespace GUI
         Biodata ans;
         string path;
 
+        long time;
+
         Color[] colors = {
             Color.FromRgb(0x577a76),
             Color.FromRgb(0x8eadc5),
@@ -89,12 +91,12 @@ namespace GUI
                 {
                     Console.WriteLine("Searching using BM algorithm");
                     Console.WriteLine(wantToCompare);
-                    (ans, path) = await Task.Run(() => Database.CompareFingerprintBM(wantToCompare));
+                    (ans, path, time) = await Task.Run(() => Database.CompareFingerprintBM(wantToCompare));
                 }
                 else
                 {
                     Console.WriteLine("Searching using KMP algorithm");
-                    (ans, path) = await Task.Run(() => Database.CompareFingerprintKMP(wantToCompare));
+                    (ans, path, time) = await Task.Run(() => Database.CompareFingerprintKMP(wantToCompare));
                 }
                 
                 // Update UI with the answer
@@ -219,7 +221,7 @@ namespace GUI
                     Rows =
                     {
                         new TableRow(labelAlgorithm),
-                        new TableRow(CreateLabel("Waktu Pencarian: 0s")),
+                        new TableRow(CreateLabel("Waktu Pencarian: " + time)),
                         new TableRow(CreateLabel("Presentase Kecocokan: 0%" ))
                     }
                 }
