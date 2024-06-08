@@ -179,6 +179,7 @@ namespace GUI
 
             row3.Items.Add(new StackLayoutItem(
                 new TableLayout{
+                    Padding = new Padding(80, 0, 0, 0),
                     Rows =
                     {
                         new TableRow(
@@ -214,7 +215,7 @@ namespace GUI
 
             row3.Items.Add(new StackLayout(
                 new TableLayout{
-                    Padding = new Padding(80, 0, 0, 0),
+                    Padding = new Padding(160, 0, 0, 0),
                     Rows =
                     {
                         new TableRow(labelAlgorithm),
