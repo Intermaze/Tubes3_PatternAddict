@@ -45,3 +45,5 @@ msbuild.err
 msbuild.wrn
 
 Data/
+
+!test/
