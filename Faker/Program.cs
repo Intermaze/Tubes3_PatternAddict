@@ -72,10 +72,8 @@ foreach (var filepath in Directory.GetFiles(Path.Join("..", "Data"))){
         // alay_name = alay_name.Remove(new Random().Next(0, alay_name.Length), 1);
     }
 
-    Tubes3.Database.InsertBiodata(biodata);
-    Tubes3.Database.InsertFingerprint(fingerprint_nama, filepath);
-
-    for (int j = 0; j < random.Next(1, 4); j++) {
+    int charToRemove = random.Next(1, 4);
+    for (int j = 0; j < charToRemove; j++) {
         if (biodata.nama.Length > 0) {
             int indexToRemove;
             do {
@@ -85,6 +83,9 @@ foreach (var filepath in Directory.GetFiles(Path.Join("..", "Data"))){
             biodata.nama = biodata.nama.Remove(indexToRemove, 1);
         }
     }
+
+    Tubes3.Database.InsertBiodata(biodata);
+    Tubes3.Database.InsertFingerprint(fingerprint_nama, filepath);
 
     Console.Write(i++);
     Console.Write(": ");

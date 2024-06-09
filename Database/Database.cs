@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Data.Sqlite;
 
 namespace Tubes3
@@ -265,13 +267,18 @@ namespace Tubes3
                 if (fingerprint.berkas_citra == result[0].Item1)
                 {
                     var resultNama = matchFunc(fingerprint.nama, listNamaNormal);
-                    string foundNama = resultNama[0].Item1;
+                    string foundNama = resultNama[0].Item2;
                     int foundNamaIdx = listNamaNormal.FindIndex(x => x.Equals(foundNama));
                     ans = listBiodata[foundNamaIdx];    
 
+                    Console.WriteLine(resultNama[0]);
+                    Console.WriteLine(resultNama[1]);
+                    Console.WriteLine(resultNama[2]);
+
+                    Console.WriteLine("Nama fingerprint: " + fingerprint.nama);
                     Console.WriteLine("Nama alay: " + ans.nama);
                     Console.WriteLine("Nama hasil: " + foundNama);   
-                    ans.nama = foundNama;
+                    ans.nama = fingerprint.nama;
 
                     foreach (var fingerpath in listFingerprint)
                     {
