@@ -272,12 +272,11 @@ namespace Tubes3
                     ans = listBiodata[foundNamaIdx];    
 
                     Console.WriteLine(resultNama[0]);
-                    Console.WriteLine(resultNama[1]);
-                    Console.WriteLine(resultNama[2]);
+                    // Console.WriteLine(resultNama[1]);
+                    // Console.WriteLine(resultNama[2]);
 
                     Console.WriteLine("Nama fingerprint: " + fingerprint.nama);
-                    Console.WriteLine("Nama alay: " + ans.nama);
-                    Console.WriteLine("Nama hasil: " + foundNama);   
+                    Console.WriteLine("Nama biodata: " + ans.nama);
                     ans.nama = fingerprint.nama;
 
                     foreach (var fingerpath in listFingerprint)

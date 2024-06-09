@@ -61,29 +61,36 @@ bool IsFirstCharacterOfWord(string str, int index) {
     return str[index - 1] == ' ';
 }
 Random random = new Random();
+
+string Alayify(string s){
+    foreach(var pair in data){
+        // alay_name = alay_name.Replace(pair.Key, pair.Value);
+        s = s.Replace(pair.Key, pair.Value);
+        // alay_name = alay_name.Remove(new Random().Next(0, alay_name.Length), 1);
+    }
+    int charToRemove = random.Next(1, 4);
+    for (int j = 0; j < charToRemove; j++) {
+        if (s.Length > 0) {
+            int indexToRemove;
+            do {
+                indexToRemove = random.Next(0, s.Length);
+            } while (s[indexToRemove] == ' ' || IsFirstCharacterOfWord(s, indexToRemove));
+
+            s = s.Remove(indexToRemove, 1);
+        }
+    }
+    return s;
+}
+
 foreach (var filepath in Directory.GetFiles(Path.Join("..", "Data"))){
     var filename = Path.GetFileNameWithoutExtension(filepath);
     var biodata = testBiodata.Generate();
 
     var fingerprint_nama = biodata.nama;
-    foreach(var pair in data){
-        // alay_name = alay_name.Replace(pair.Key, pair.Value);
-        biodata.nama = biodata.nama.Replace(pair.Key, pair.Value);
-        // alay_name = alay_name.Remove(new Random().Next(0, alay_name.Length), 1);
+    if(random.Next(0,2) == 1){
+        biodata.nama = Alayify(biodata.nama);
     }
-
-    int charToRemove = random.Next(1, 4);
-    for (int j = 0; j < charToRemove; j++) {
-        if (biodata.nama.Length > 0) {
-            int indexToRemove;
-            do {
-                indexToRemove = random.Next(0, biodata.nama.Length);
-            } while (biodata.nama[indexToRemove] == ' ' || IsFirstCharacterOfWord(biodata.nama, indexToRemove));
-
-            biodata.nama = biodata.nama.Remove(indexToRemove, 1);
-        }
-    }
-
+    
     Tubes3.Database.InsertBiodata(biodata);
     Tubes3.Database.InsertFingerprint(fingerprint_nama, filepath);
 
@@ -95,5 +102,6 @@ foreach (var filepath in Directory.GetFiles(Path.Join("..", "Data"))){
 }
 
 var bro = testBiodata.Generate(); 
+
 
 

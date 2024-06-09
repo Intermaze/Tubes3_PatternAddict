@@ -278,6 +278,16 @@ namespace GUI
                     NotFound.Visible = false;
                     SetImage(outputImageView, filePath);
                 }else{
+                    nameLabel.Text = $"Nama:";
+                    addressLabel.Text = $"Alamat:";
+                    jobLabel.Text = $"Pekerjaan:";
+                    dobLabel.Text = $"Tanggal Lahir:";
+                    pobLabel.Text = $"Tempat Lahir: {biodata.tempat_lahir}";
+                    nationalityLabel.Text = $"Kewarganegaraan:";
+                    religionLabel.Text = $"Agama:";
+                    pathAns.Text = $"Path: ";
+                    percentageLabel.Text = $"Persentase Kecocokan: ";
+                    SetImage(outputImageView, Path.GetFullPath("../Assets/default.BMP"));
                     NotFound.Visible = true;
                 }
                 timeLabel.Text = $"Waktu Eksekusi: {time} ms";
