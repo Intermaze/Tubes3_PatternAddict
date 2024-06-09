@@ -274,13 +274,13 @@ namespace GUI
                     nationalityLabel.Text = $"Kewarganegaraan: {biodata.kewarganegaraan}";
                     religionLabel.Text = $"Agama: {biodata.agama}";
                     pathAns.Text = $"Path: {path}";
-                    timeLabel.Text = $"Waktu Eksekusi: {time} ms";
                     percentageLabel.Text = $"Persentase Kecocokan: {percentage}%";
                     NotFound.Visible = false;
                     SetImage(outputImageView, filePath);
                 }else{
                     NotFound.Visible = true;
                 }
+                timeLabel.Text = $"Waktu Eksekusi: {time} ms";
 
             }
         }
