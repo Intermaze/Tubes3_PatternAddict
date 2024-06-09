@@ -213,16 +213,12 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
         {
             var listFingerprint = GetFingerprints();
             List<Biodata> listBiodata = GetBiodata();
-            List<String> listNama = new List<string>();
-            foreach (var biodata in listBiodata){
-                listNama.Add(biodata.nama);
-            }
 
-            var listBiodataString = new List<string>();
-            foreach (var bio in listBiodata)
-            {
-                listBiodataString.Add(bio.nama);
-            }
+            // var listBiodataString = new List<string>();
+            // foreach (var bio in listBiodata)
+            // {
+            //     listBiodataString.Add(bio.nama);
+            // }
 
             var listFingerprintASCII = new List<Fingerprint>();
             foreach (var item in listFingerprint)
@@ -239,8 +235,14 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             {
                 listFingerprintString.Add(fingerprint.berkas_citra);
             }
-
+            
             RegularExpression regex = new RegularExpression();
+            List<String> listNamaNormal = new List<string>();
+            foreach (var biodata in listBiodata){
+                var namaNormal = regex.ConvertAlayToNormal(biodata.nama);
+                listNamaNormal.Add(namaNormal);
+            }
+            
             string path = null;
             Biodata ans = null;
 
@@ -249,20 +251,15 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             {
                 if (fingerprint.berkas_citra == result[0].Item1)
                 {
-                    var normalNama = regex.ConvertAlayToNormal(fingerprint.nama);
-                    var resultNama = matchFunc(normalNama, listNama);
-                    string namaHasil = resultNama[0].Item1;
-                    Console.WriteLine("Nama alay: " + fingerprint.nama);
-                    Console.WriteLine("Nama hasil: " + resultNama[0].Item2);                 
-                    
-                    foreach (var biodata in listBiodata)
-                    {
-                        if (namaHasil.Equals(biodata.nama))
-                        {
-                            ans = biodata;
-                            break;
-                        }
-                    }
+                    var resultNama = matchFunc(fingerprint.nama, listNamaNormal);
+                    string foundNama = resultNama[0].Item1;
+                    int foundNamaIdx = listNamaNormal.FindIndex(x => x.Equals(foundNama));
+                    ans = listBiodata[foundNamaIdx];    
+
+                    Console.WriteLine("Nama alay: " + ans.nama);
+                    Console.WriteLine("Nama hasil: " + foundNama);   
+                    ans.nama = foundNama;
+
                     foreach (var fingerpath in listFingerprint)
                     {
                         if (fingerpath.nama == fingerprint.nama)
