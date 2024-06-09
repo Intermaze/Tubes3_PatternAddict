@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using Microsoft.Data.Sqlite;
-using Tubes3; 
 
 namespace Tubes3
 {
@@ -23,7 +21,6 @@ CREATE TABLE IF NOT EXISTS biodata (
 	kewarganegaraan VARCHAR(50)
 );
 
-	
 CREATE TABLE IF NOT EXISTS sidik_jari (
 		nama VARCHAR(100),
 		berkas_citra TEXT
@@ -33,21 +30,38 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
 
         public static void Initialize()
         {
-            using (Database.connection = new SqliteConnection("Data Source=../data.db"))
+            ExecuteNonQuery(ddl);
+        }
+
+        private static void OpenConnection()
+        {
+            if (connection == null)
             {
-                Database.connection.Open();
-                var command = Database.connection.CreateCommand();
-                command.CommandText = Database.ddl;
+                connection = new SqliteConnection("Data Source=../data.db");
+            }
+            if (connection.State != System.Data.ConnectionState.Open)
+            {
+                connection.Open();
+            }
+        }
+
+        private static void ExecuteNonQuery(string commandText, params (string, object)[] parameters)
+        {
+            OpenConnection();
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = commandText;
+                foreach (var param in parameters)
+                {
+                    command.Parameters.AddWithValue(param.Item1, param.Item2);
+                }
                 command.ExecuteNonQuery();
             }
         }
 
         public static void InsertBiodata(Biodata bio)
         {
-            Database.connection.Open(); 
-            var command = Database.connection.CreateCommand(); 
-            command.CommandText = 
-            @"
+            ExecuteNonQuery(@"
                 INSERT INTO biodata (
                     nama, 
                     tempat_lahir, 
@@ -70,219 +84,182 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                     $maritalStatus, 
                     $job, 
                     $nationality
-                );
-            ";
-
-            command.Parameters.AddWithValue("$name", bio.nama); 
-            command.Parameters.AddWithValue("$birthDate", bio.tanggal_lahir); 
-            command.Parameters.AddWithValue("$birthPlace", bio.tempat_lahir); 
-            command.Parameters.AddWithValue("$gender", bio.jenis_kelamin); 
-            command.Parameters.AddWithValue("$bloodType", bio.golongan_darah); 
-            command.Parameters.AddWithValue("$address", bio.alamat); 
-            command.Parameters.AddWithValue("$religion", bio.agama); 
-            command.Parameters.AddWithValue("$maritalStatus", bio.status_perkawinan); 
-            command.Parameters.AddWithValue("$job", bio.pekerjaan); 
-            command.Parameters.AddWithValue("$nationality", bio.kewarganegaraan);
-            
-            command.ExecuteNonQuery();
+                );",
+                ("$name", bio.nama),
+                ("$birthDate", bio.tanggal_lahir),
+                ("$birthPlace", bio.tempat_lahir),
+                ("$gender", bio.jenis_kelamin),
+                ("$bloodType", bio.golongan_darah),
+                ("$address", bio.alamat),
+                ("$religion", bio.agama),
+                ("$maritalStatus", bio.status_perkawinan),
+                ("$job", bio.pekerjaan),
+                ("$nationality", bio.kewarganegaraan)
+            );
         }
-        public static void InsertFingerprint(string name,  string fingerprint)
+
+        public static void InsertFingerprint(string name, string fingerprint)
         {
-            Database.connection.Open();
-            var command = Database.connection.CreateCommand();
-            command.CommandText =
-                @"
-						INSERT INTO sidik_jari (nama, berkas_citra)
-						VALUES ($name, $fingerprint); 
-						";
-
-            command.Parameters.AddWithValue("$name", name);
-            command.Parameters.AddWithValue("$fingerprint", fingerprint);
-
-            command.ExecuteNonQuery();
+            ExecuteNonQuery(@"
+                INSERT INTO sidik_jari (nama, berkas_citra)
+                VALUES ($name, $fingerprint);",
+                ("$name", name),
+                ("$fingerprint", fingerprint)
+            );
         }
 
-        public static void ChangeFingerprintName(string from, string to){
-            Database.connection.Open();
-            var command = Database.connection.CreateCommand();
-            command.CommandText =
-                @"
-						UPDATE sidik_jari 
-                        SET nama = $to
-                        WHERE nama = $from;
-						";
-
-            command.Parameters.AddWithValue("$from", from);
-            command.Parameters.AddWithValue("$to", to);
-
-            command.ExecuteNonQuery();
-
+        public static void ChangeFingerprintName(string from, string to)
+        {
+            ExecuteNonQuery(@"
+                UPDATE sidik_jari 
+                SET nama = $to
+                WHERE nama = $from;",
+                ("$from", from),
+                ("$to", to)
+            );
         }
 
-        public static void ChangeBiodataName(string from, string to){
-            Database.connection.Open();
-            var command = Database.connection.CreateCommand();
-            command.CommandText =
-                @"
-						UPDATE biodata
-                        SET nama = $to
-                        WHERE nama = $from;
-						";
-
-            command.Parameters.AddWithValue("$from", from);
-            command.Parameters.AddWithValue("$to", to);
-
-            command.ExecuteNonQuery();
-
+        public static void ChangeBiodataName(string from, string to)
+        {
+            ExecuteNonQuery(@"
+                UPDATE biodata
+                SET nama = $to
+                WHERE nama = $from;",
+                ("$from", from),
+                ("$to", to)
+            );
         }
 
-        public static Fingerprint ParseFingerprint(SqliteDataReader r){
-            var f = new Fingerprint(); 
-            f.nama = (string)r["nama"];
-            f.berkas_citra = (string)r["berkas_citra"]; 
-
-            return f;
-        }
-
-        public static Biodata ParseBiodata(SqliteDataReader r){
-            var b = new Biodata(); 
-
-            b.nama = (string)r["nama"];
-            b.alamat = (string)r["alamat"]; 
-            b.golongan_darah = (string)r["golongan_darah"]; 
-            b.status_perkawinan = (string)r["status_perkawinan"]; 
-            b.kewarganegaraan = (string)r["kewarganegaraan"]; 
-            b.tanggal_lahir = (string)r["tanggal_lahir"]; 
-            b.tempat_lahir = (string)r["tempat_lahir"]; 
-            b.pekerjaan = (string)r["pekerjaan"]; 
-            b.jenis_kelamin = (string)r["jenis_kelamin"];
-            b.agama = (string)r["agama"];
-
-            return b; 
-        }
-
-        public static void FixFingerprint(){
-            Database.connection.Open(); 
-            var commandFingerprint = Database.connection.CreateCommand();
-            commandFingerprint.CommandText = @"SELECT * FROM sidik_jari;";
-            var readerFingerprint = commandFingerprint.ExecuteReader();
-            List<Fingerprint> listFingerprint= new List<Fingerprint>();
-            while(readerFingerprint.Read()){
-                // Console.WriteLine(readerFingerprint["nama"]);
-                Fingerprint fingerprint = ParseFingerprint(readerFingerprint);
-                listFingerprint.Add(fingerprint);
-            }
-
-            var commandBiodata = Database.connection.CreateCommand(); 
-            commandBiodata.CommandText = @"SELECT * FROM biodata;";
-            var readerBiodata = commandBiodata.ExecuteReader(); 
-            List<Biodata> listBiodata = new List<Biodata>(); 
-
-            while(readerBiodata.Read()){
-                Biodata biodata = ParseBiodata(readerBiodata); 
-                listBiodata.Add(biodata);
-            }
-
-            List<string> listBiodataString = new List<string>(); 
-            foreach(var bio in listBiodata){
-                listBiodataString.Add(bio.nama);
-            }
-
-            List<string> listFingerprintString = new List<string>(); 
-            foreach (var fingerprint in listFingerprint){
-                listFingerprintString.Add(fingerprint.berkas_citra);
-            }
-            
-            KnuthMorrisPratt kmp = new KnuthMorrisPratt();  
-            foreach (var fingerprint in listFingerprint){
-                /*MEMBANDINGKAN NAMANYA SAJA*/
-                int[] lcsTemp = new int[fingerprint.nama.Length];
-                kmp.generate_lps(fingerprint.nama, fingerprint.nama.Length, lcsTemp);
-                List<(string, string, int)> result = kmp.process_all(fingerprint.nama, listBiodataString, lcsTemp);
-                foreach(var item in result){
-                    Console.WriteLine("Pattern: " + fingerprint.nama +  " | Closest Match: " + item.Item1 + " | Text: " + item.Item2 + " | distance: " + item.Item3);
-                    break;
+        private static List<T> GetData<T>(string commandText, Func<SqliteDataReader, T> parseFunc)
+        {
+            OpenConnection();
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = commandText;
+                using (var reader = command.ExecuteReader())
+                {
+                    var result = new List<T>();
+                    while (reader.Read())
+                    {
+                        result.Add(parseFunc(reader));
+                    }
+                    return result;
                 }
-
-                /*CHANGE USERNAME*/
-                // int[] lcsTemp = new int[fingerprint.nama.Length]; 
-                // kmp.generate_lps(fingerprint.nama, fingerprint.nama.Length, lcsTemp);
-                // List<(string, string, int)> result = kmp.process_all(fingerprint.nama, listBiodataString, lcsTemp); 
-                // ChangeFingerprintName(fingerprint.nama, result[0].Item2); 
-                // Console.WriteLine("Berhasil mengganti: " + fingerprint.nama + " -> " + result[0].Item2);
             }
         }
 
-        public static (Biodata, string, float) CompareFingerprintKMP(string image, string imageBin){
-            //melakukan koneksi ke database
-            Database.connection.Open(); 
-            
-            //Command untuk mengambil dari sidik jari
-            var commandFingerprint = Database.connection.CreateCommand();
-            commandFingerprint.CommandText = @"SELECT * FROM sidik_jari;";
-            var readerFingerprint = commandFingerprint.ExecuteReader();
-            
-            //Menambahkan ke list of Fingerprint
-            List<Fingerprint> listFingerprint= new List<Fingerprint>();
-            while(readerFingerprint.Read()){
-                Fingerprint fingerprint = ParseFingerprint(readerFingerprint);
-                listFingerprint.Add(fingerprint);
-            }
+        private static List<Fingerprint> GetFingerprints()
+        {
+            return GetData("SELECT * FROM sidik_jari;", ParseFingerprint);
+        }
 
-            //Command untuk mengambil dari biodata
-            var commandBiodata = Database.connection.CreateCommand(); 
-            commandBiodata.CommandText = @"SELECT * FROM biodata;";
-            var readerBiodata = commandBiodata.ExecuteReader(); 
-            
-            //Menambahkan ke list of Biodata
-            List<Biodata> listBiodata = new List<Biodata>(); 
-            while(readerBiodata.Read()){
-                Biodata biodata = ParseBiodata(readerBiodata); 
-                listBiodata.Add(biodata);
-            }
+        private static List<Biodata> GetBiodata()
+        {
+            return GetData("SELECT * FROM biodata;", ParseBiodata);
+        }
 
-            //Mengubah list of Biodata menjadi list of String 
-            List<string> listBiodataString = new List<string>(); 
-            foreach(var bio in listBiodata){
+        public static Fingerprint ParseFingerprint(SqliteDataReader r)
+        {
+            return new Fingerprint
+            {
+                nama = (string)r["nama"],
+                berkas_citra = (string)r["berkas_citra"]
+            };
+        }
+
+        public static Biodata ParseBiodata(SqliteDataReader r)
+        {
+            return new Biodata
+            {
+                nama = (string)r["nama"],
+                alamat = (string)r["alamat"],
+                golongan_darah = (string)r["golongan_darah"],
+                status_perkawinan = (string)r["status_perkawinan"],
+                kewarganegaraan = (string)r["kewarganegaraan"],
+                tanggal_lahir = (string)r["tanggal_lahir"],
+                tempat_lahir = (string)r["tempat_lahir"],
+                pekerjaan = (string)r["pekerjaan"],
+                jenis_kelamin = (string)r["jenis_kelamin"],
+                agama = (string)r["agama"]
+            };
+        }
+
+        // public static void FixFingerprint()
+        // {
+        //     var listFingerprint = GetFingerprints();
+        //     var listBiodata = GetBiodata();
+        //     var listBiodataString = new List<string>();
+
+        //     foreach (var bio in listBiodata)
+        //     {
+        //         listBiodataString.Add(bio.nama);
+        //     }
+
+        //     KnuthMorrisPratt kmp = new KnuthMorrisPratt();
+        //     foreach (var fingerprint in listFingerprint)
+        //     {
+        //         int[] lcsTemp = new int[fingerprint.nama.Length];
+        //         kmp.generate_lps(fingerprint.nama, fingerprint.nama.Length, lcsTemp);
+        //         var result = kmp.process_all(fingerprint.nama, listBiodataString, lcsTemp);
+        //         foreach (var item in result)
+        //         {
+        //             Console.WriteLine("Pattern: " + fingerprint.nama + " | Closest Match: " + item.Item1 + " | Text: " + item.Item2 + " | distance: " + item.Item3);
+        //             break;
+        //         }
+        //     }
+        // }
+
+        private static (Biodata, string, float) CompareFingerprint(string image, string imageBin, Func<string, List<string>, List<(string, string, int)>> matchFunc)
+        {
+            var listFingerprint = GetFingerprints();
+            var listBiodata = GetBiodata();
+
+            var listBiodataString = new List<string>();
+            foreach (var bio in listBiodata)
+            {
                 listBiodataString.Add(bio.nama);
             }
 
-            List<Fingerprint> listFingerprintASCII = new List<Fingerprint>(); 
-            foreach(var item in listFingerprint){
-                Fingerprint temp = new Fingerprint(){
+            var listFingerprintASCII = new List<Fingerprint>();
+            foreach (var item in listFingerprint)
+            {
+                listFingerprintASCII.Add(new Fingerprint
+                {
                     nama = item.nama,
                     berkas_citra = Converter.ImageToAsciiStraight(item.berkas_citra)
-                }; 
-                listFingerprintASCII.Add(temp);
-            } 
+                });
+            }
 
-            //Mengubah list of Fingerprint menjadi list of String
-            List<string> listFingerprintString = new List<string>(); 
-            foreach (var fingerprint in listFingerprintASCII){
+            var listFingerprintString = new List<string>();
+            foreach (var fingerprint in listFingerprintASCII)
+            {
                 listFingerprintString.Add(fingerprint.berkas_citra);
             }
 
             RegularExpression regex = new RegularExpression();
-            KnuthMorrisPratt kmp = new KnuthMorrisPratt();  
-
             string path = null;
-            Biodata ans= null; 
-            int[] lcs = new int[image.Length]; 
-            kmp.generate_lps(image, image.Length, lcs); 
-            List<(string, string, int)> result = kmp.process_all(image, listFingerprintString, lcs); //string dari fingerprint
-            foreach(var fingerprint in  listFingerprintASCII){
-                if(fingerprint.berkas_citra == result[0].Item1){
-                    foreach(var biodata in listBiodata){
-                        if(regex.IsMatch(fingerprint.nama, biodata.nama)){
+            Biodata ans = null;
+
+            var result = matchFunc(image, listFingerprintString);
+            foreach (var fingerprint in listFingerprintASCII)
+            {
+                if (fingerprint.berkas_citra == result[0].Item1)
+                {
+                    foreach (var biodata in listBiodata)
+                    {
+                        if (regex.IsMatch(fingerprint.nama, biodata.nama))
+                        {
                             Console.WriteLine("Nama alay: " + biodata.nama);
                             ans = biodata;
                             ans.nama = fingerprint.nama;
                             break;
                         }
-                    } 
-                    foreach(var fingerpath in listFingerprint){
-                        if(fingerpath.nama == fingerprint.nama){
-                            path = fingerpath.berkas_citra; 
+                    }
+                    foreach (var fingerpath in listFingerprint)
+                    {
+                        if (fingerpath.nama == fingerprint.nama)
+                        {
+                            path = fingerpath.berkas_citra;
                             break;
                         }
                     }
@@ -290,14 +267,14 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                 }
             }
 
-
-            float percentage; 
-            string patternBin = Converter.ImageToBin(path); 
+            float percentage;
+            string patternBin = Converter.ImageToBin(path);
             percentage = (float)(30 - Util.CalculateHammingDistance(patternBin, imageBin)) / 30 * 100;
 
-            if(ans != null && path != null){
+            if (ans != null && path != null)
+            {
                 Console.WriteLine("Path: " + path);
-                Console.WriteLine("Hasil: "); 
+                Console.WriteLine("Hasil: ");
                 Console.WriteLine("Nama: " + ans.nama);
                 Console.WriteLine("Alamat: " + ans.alamat);
                 Console.WriteLine("pekerjaan: " + ans.pekerjaan);
@@ -310,106 +287,18 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             return (null, null, 0);
         }
 
-        public static (Biodata, string, float) CompareFingerprintBM(string image, string imageBin){
-            //melakukan koneksi ke database
-            Database.connection.Open(); 
-            
-            //Command untuk mengambil dari sidik jari
-            var commandFingerprint = Database.connection.CreateCommand();
-            commandFingerprint.CommandText = @"SELECT * FROM sidik_jari;";
-            var readerFingerprint = commandFingerprint.ExecuteReader();
-            
-            //Menambahkan ke list of Fingerprint
-            List<Fingerprint> listFingerprint= new List<Fingerprint>();
-            while(readerFingerprint.Read()){
-                Fingerprint fingerprint = ParseFingerprint(readerFingerprint);
-                listFingerprint.Add(fingerprint);
-            }
+        public static (Biodata, string, float) CompareFingerprintKMP(string image, string imageBin)
+        {
+            KnuthMorrisPratt kmp = new KnuthMorrisPratt();
+            int[] lcs = new int[image.Length];
+            kmp.generate_lps(image, image.Length, lcs);
+            return CompareFingerprint(image, imageBin, (img, list) => kmp.process_all(img, list, lcs));
+        }
 
-            //Command untuk mengambil dari biodata
-            var commandBiodata = Database.connection.CreateCommand(); 
-            commandBiodata.CommandText = @"SELECT * FROM biodata;";
-            var readerBiodata = commandBiodata.ExecuteReader(); 
-            
-            //Menambahkan ke list of Biodata
-            List<Biodata> listBiodata = new List<Biodata>(); 
-            while(readerBiodata.Read()){
-                Biodata biodata = ParseBiodata(readerBiodata); 
-                listBiodata.Add(biodata);
-            }
-
-            //Mengubah list of Biodata menjadi list of String 
-            List<string> listBiodataString = new List<string>(); 
-            foreach(var bio in listBiodata){
-                listBiodataString.Add(bio.nama);
-            }
-
-            List<Fingerprint> listFingerprintASCII = new List<Fingerprint>(); 
-            foreach(var item in listFingerprint){
-                Fingerprint temp = new Fingerprint(){
-                    nama = item.nama,
-                    berkas_citra = Converter.ImageToAsciiStraight(item.berkas_citra)
-                }; 
-                listFingerprintASCII.Add(temp);
-            } 
-
-            //Mengubah list of Fingerprint menjadi list of String
-            List<string> listFingerprintString = new List<string>(); 
-            foreach (var fingerprint in listFingerprintASCII){
-                listFingerprintString.Add(fingerprint.berkas_citra);
-            }
-
-
-
-            RegularExpression regex = new RegularExpression();
-            BoyerMoore kmp = new BoyerMoore();  
-
-            string path = null; 
-            Biodata ans= null; 
-            string namaAlay = null;
+        public static (Biodata, string, float) CompareFingerprintBM(string image, string imageBin)
+        {
             BoyerMoore bm = new BoyerMoore();
-            List<(string, string, int)> result = bm.ProcessAllBoyerMoore(image, listFingerprintString); 
-            foreach(var fingerprint in  listFingerprintASCII){
-                if(fingerprint.berkas_citra == result[0].Item1){
-                    foreach(var biodata in listBiodata){
-                        if(regex.IsMatch(fingerprint.nama, biodata.nama)){
-                            Console.WriteLine("Nama alay: " + biodata.nama);
-                            namaAlay = biodata.nama;
-                            ans = biodata;
-                            ans.nama = fingerprint.nama;
-                            break;
-                        }
-                    } 
-                    foreach(var fingerpath in listFingerprint){
-                        if(fingerpath.nama == fingerprint.nama){
-                            path = fingerpath.berkas_citra; 
-                            break;
-                        }
-                    }
-                    break;
-                }
-            }
-            // string patternBinary = Util.ASCIItoBin(ans.nama);
-            // string dataBinary = Util.ASCIItoBin(namaAlay);
-            float percentage; 
-            string patternBin = Converter.ImageToBin(path); 
-            percentage = (float)(30 - Util.CalculateHammingDistance(patternBin, imageBin)) / 30 * 100;
-            
-            
-            if(ans != null){
-                Console.WriteLine("path: " + path);
-                Console.WriteLine("Hasil: "); 
-                Console.WriteLine("Nama: " + ans.nama);
-                Console.WriteLine("Alamat: " + ans.alamat);
-                Console.WriteLine("pekerjaan: " + ans.pekerjaan);
-                Console.WriteLine("tanggal_lahir: " + ans.tanggal_lahir);
-                Console.WriteLine("tempat_lahir: " + ans.tempat_lahir);
-                Console.WriteLine("kewarganegaraan: " + ans.kewarganegaraan);
-                Console.WriteLine("agama: " + ans.agama);
-                return (ans, path, percentage);
-            }
-            return (null, null, 0);
+            return CompareFingerprint(image, imageBin, bm.ProcessAllBoyerMoore);
         }
-
     }
 }
