@@ -24,6 +24,7 @@ namespace GUI
         Label pathAns;
         string selectedImagePath;
         Label labelAlgorithm;
+        Label NotFound;
 
         Label percentageLabel;
         bool isBM = true;
@@ -114,21 +115,10 @@ namespace GUI
                 if (ans != null)
                 {
                     UpdateBiodata(ans, Path.GetFullPath(path));
-                     
-                    // // Show labels
-                    // nameLabel.Visible = true;
-                    // addressLabel.Visible = true;
-                    // jobLabel.Visible = true;
-                    // dobLabel.Visible = true;
-                    // pobLabel.Visible = true;
-                    // nationalityLabel.Visible = true;
-                    // religionLabel.Visible = true;
-                    // pathAns.Visible = true;
                 }
             };
 
             Resizable = false;
-
             labelAlgorithm = CreateLabel("Algorithm in use: BM"); // Initialize labelAlgorithm
 
             var biodataFont = new Font(SystemFont.Default, 10);
@@ -143,6 +133,8 @@ namespace GUI
             pathAns = CreateLabel("Path: ", biodataFont);
             timeLabel = CreateLabel("Waktu Eksekusi:");
             percentageLabel = CreateLabel("Persentase Kecocokan:");
+            NotFound = CreateLabel("Tidak ada yang cocok", new Font(SystemFont.Bold, 10));
+            NotFound.Visible = false;
 
             inputImageView = new ImageView 
             {
@@ -176,7 +168,8 @@ namespace GUI
                                 pobLabel,
                                 nationalityLabel,
                                 religionLabel,
-                                pathAns
+                                pathAns,
+                                NotFound,
                             },
                             Width = 300,
                             Padding = new Padding(8)
@@ -272,19 +265,24 @@ namespace GUI
         {
             if (biodata != null)
             {
-                nameLabel.Text = $"Nama: {biodata.nama}";
-                addressLabel.Text = $"Alamat: {biodata.alamat}";
-                jobLabel.Text = $"Pekerjaan: {biodata.pekerjaan}";
-                dobLabel.Text = $"Tanggal Lahir: {biodata.tanggal_lahir}";
-                pobLabel.Text = $"Tempat Lahir: {biodata.tempat_lahir}";
-                nationalityLabel.Text = $"Kewarganegaraan: {biodata.kewarganegaraan}";
-                religionLabel.Text = $"Agama: {biodata.agama}";
-                pathAns.Text = $"Path: {path}";
+                if(percentage >= 25){
+                    nameLabel.Text = $"Nama: {biodata.nama}";
+                    addressLabel.Text = $"Alamat: {biodata.alamat}";
+                    jobLabel.Text = $"Pekerjaan: {biodata.pekerjaan}";
+                    dobLabel.Text = $"Tanggal Lahir: {biodata.tanggal_lahir}";
+                    pobLabel.Text = $"Tempat Lahir: {biodata.tempat_lahir}";
+                    nationalityLabel.Text = $"Kewarganegaraan: {biodata.kewarganegaraan}";
+                    religionLabel.Text = $"Agama: {biodata.agama}";
+                    pathAns.Text = $"Path: {path}";
+                    percentageLabel.Text = $"Persentase Kecocokan: {percentage}%";
+                    NotFound.Visible = false;
+                    SetImage(outputImageView, filePath);
+                }else{
+                    NotFound.Visible = true;
+                }
                 timeLabel.Text = $"Waktu Eksekusi: {time} ms";
-                percentageLabel.Text = $"Persentase Kecocokan: {percentage}%";
-                Console.WriteLine("Fuck you: " + percentage);
+
             }
-            SetImage(outputImageView, filePath);
         }
 
         public void SetImage(ImageView imageView, string path)

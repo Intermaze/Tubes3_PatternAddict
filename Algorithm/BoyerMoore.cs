@@ -3,36 +3,28 @@ using System.Globalization;
 
 namespace Tubes3
 {
-    public class BoyerMoore
+    public class BoyerMoore : IPatternMatchingAlgorithm
     {
-        /*
-        hampir sama kayak KMP
-        */
-        public List<(string, string, int)> ProcessAllBoyerMoore(string pattern, List<string> database)
+        public List<(string, string, int)> ProcessAll(string pattern, List<string> database)
         {
             List<(string, string, int)> result = new List<(string, string, int)>();
             foreach (var data in database)
             {
                 int patternIndex = BoyerMooreSearch(pattern, data);
                 if (patternIndex != -1) result.Add((pattern, data, 0));
-
             }
-
-            if(result.Count() == 0){
-                foreach (var data in database){
+            if (result.Count == 0)
+            {
+                foreach (var data in database)
+                {
                     (string, int) closestMatch = Util.FindClosestMatch(pattern, data);
                     if (!string.IsNullOrEmpty(closestMatch.Item1))
                     {
-                        result.Add(
-                            (closestMatch.Item1, data, closestMatch.Item2)
-                        );
+                        result.Add((closestMatch.Item1, data, closestMatch.Item2));
                     }
                 }
             }
-
-
-            result = result.OrderBy(tuple => tuple.Item3).ToList();
-            return result;
+            return result.OrderBy(tuple => tuple.Item3).ToList();
         }
 
         private int BoyerMooreSearch(string pattern, string text)
@@ -41,9 +33,7 @@ namespace Tubes3
             int n = text.Length;
 
             int[] badChar = BuildBadCharacterTable(pattern);
-            // int[] goodSuffix = BuildGoodSuffixTable(pattern);
-
-            int s = 0; // s is shift of the pattern with respect to text
+            int s = 0; 
             while (s <= (n - m))
             {
                 int j = m - 1;
@@ -54,54 +44,6 @@ namespace Tubes3
                     return s;
                 }
                 else s += Math.Max(1, j - badChar[text[s + j]]);
-            }
-            return -1;
-        }
-        
-        private int BoyerMooreSearchGoodchar(string pattern, string text)
-        {
-            int m = pattern.Length;
-            int n = text.Length;
-
-            int[] badChar = BuildBadCharacterTable(pattern);
-            int[] goodSuffix = BuildGoodSuffixTable(pattern);
-
-            int s = 0; // s is the shift of the pattern with respect to the text
-            while (s <= (n - m))
-            {
-                int j = m - 1;
-                while (j >= 0 && pattern[j] == text[s + j]) j--;
-                if (j < 0) return s;
-                else
-                {
-                    // Calculate the shift with both bad character and good suffix rules
-                    s += Math.Max(1, Math.Max(j - badChar[text[s + j]], goodSuffix[j]));
-                }
-            }
-            return -1;
-        }
-        private int BoyerMooreSearchLookingGlass(string pattern, string text)
-        {
-            int m = pattern.Length;
-            int n = text.Length;
-
-            int[] lookingGlass = BuildLookingGlass(pattern);
-
-            int s = 0; 
-            while (s <= (n - m))
-            {
-                int j = m - 1;
-                while (j >= 0 && pattern[j] == text[s + j]) j--;
-                if (j < 0)
-                {
-                    s += (s + m < n) ? lookingGlass[0] : 1;
-                    return s;
-                }
-                else
-                {
-                    int lookingGlassShift = lookingGlass[j];
-                    s += lookingGlassShift;
-                }
             }
             return -1;
         }
@@ -157,22 +99,6 @@ namespace Tubes3
 
             return goodSuffix;
         }
-    private int[] BuildLookingGlass(string pattern)
-    {
-        int[] lookingGlassTable = new int[pattern.Length];
-
-        for(int i = 0; i < pattern.Length; i++)
-        {
-            lookingGlassTable[i] = pattern.Length;
-        }
-
-        for (int i = 0; i < pattern.Length - 1; i++)
-        {
-            lookingGlassTable[pattern.Length - 1 - i] = Math.Min(lookingGlassTable[pattern.Length - 1 - i], i);
-        }
-
-        return lookingGlassTable;
-    }
     }
 
 }
