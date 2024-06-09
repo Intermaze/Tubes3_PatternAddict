@@ -273,15 +273,15 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
 
             if (ans != null && path != null)
             {
-                Console.WriteLine("Path: " + path);
-                Console.WriteLine("Hasil: ");
-                Console.WriteLine("Nama: " + ans.nama);
-                Console.WriteLine("Alamat: " + ans.alamat);
-                Console.WriteLine("pekerjaan: " + ans.pekerjaan);
-                Console.WriteLine("tanggal_lahir: " + ans.tanggal_lahir);
-                Console.WriteLine("tempat_lahir: " + ans.tempat_lahir);
-                Console.WriteLine("kewarganegaraan: " + ans.kewarganegaraan);
-                Console.WriteLine("agama: " + ans.agama);
+                // Console.WriteLine("Path: " + path);
+                // Console.WriteLine("Hasil: ");
+                // Console.WriteLine("Nama: " + ans.nama);
+                // Console.WriteLine("Alamat: " + ans.alamat);
+                // Console.WriteLine("pekerjaan: " + ans.pekerjaan);
+                // Console.WriteLine("tanggal_lahir: " + ans.tanggal_lahir);
+                // Console.WriteLine("tempat_lahir: " + ans.tempat_lahir);
+                // Console.WriteLine("kewarganegaraan: " + ans.kewarganegaraan);
+                // Console.WriteLine("agama: " + ans.agama);
                 return (ans, path, percentage);
             }
             return (null, null, 0);

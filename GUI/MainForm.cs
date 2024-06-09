@@ -264,7 +264,7 @@ namespace GUI
         {
             if (biodata != null)
             {
-                if(percentage >= 20){
+                if(percentage >= 25){
                     nameLabel.Text = $"Nama: {biodata.nama}";
                     addressLabel.Text = $"Alamat: {biodata.alamat}";
                     jobLabel.Text = $"Pekerjaan: {biodata.pekerjaan}";

@@ -27,9 +27,7 @@ namespace Tubes3
                     if (closestMatch.Item1 != "")
                     {
 
-                        //untuk sekarang buat distancenya hammingDistance + perbedaan distance dari tiap karakter
                         result.Add(
-                            // (closestMatch.Item1, data, closestMatch.Item2 + distanceEachChar)
                             (closestMatch.Item1, data, closestMatch.Item2)
                         );
                     }
@@ -42,37 +40,20 @@ namespace Tubes3
 
         bool KMPSearch(string pattern_string, string string_to_compare, int[] least_prefix_suffix)
         {
-            /*
-                inisiasi panjang masing-masing array
-            */
             int first_length = pattern_string.Length;
             int second_length = string_to_compare.Length;
 
-            /*
-                buat sebuah array yang menampung suffix daripattern_stringg
-            */
-            int idx_first = 0; // index for handlingpattern_stringg
-            /*
-                looping untuk melakukan perbandingan pada  kedua string
-            */
+            int idx_first = 0; 
             int idx_second = 0;
             while (idx_second < second_length)
             {
-                /*
-                    melakukan perbandingan pada
-                */
                 if (pattern_string[idx_first] == string_to_compare[idx_second])
                 {
                     idx_first++;
                     idx_second++;
                 }
-                /*
-                    kalo idx_first sampai dengan panjangnya dari length dari pattern_string maka pattern ditemukan
-                */
                 if (idx_first == first_length)
                 {
-                    // Console.Write(pattern_string + " Found pattern " + "at index " + (idx_second - idx_first));
-                    // idx_first = least_prefix_suffix[idx_first - 1];
                     return true;
                 }
                 else if (
@@ -86,14 +67,6 @@ namespace Tubes3
             }
             return false;
         }
-
-        /**
-            basically  yang ini ngitung kayak huruf yang beda dari awal sampai akhir
-            jadi misal
-            pattern AAA
-            dibandingin sama CDE
-            nah ini bedanya 3 karena beda semua
-        */
 
         public void generate_lps(string pattern, int length, int[] ans)
         {

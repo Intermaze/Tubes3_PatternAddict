@@ -54,15 +54,3 @@ foreach (var filepath in Directory.GetFiles(Path.Join("..", "Data"))){
 var bro = testBiodata.Generate(); 
 
 
-
-// Console.WriteLine(bro.jenis_kelamin);
-// Console.WriteLine(bro.nama);
-// Console.WriteLine(bro.tanggal_lahir);
-// Console.WriteLine(bro.tempat_lahir);
-// Console.WriteLine(bro.alamat);
-// Console.WriteLine(bro.golongan_darah);
-// Console.WriteLine(bro.agama);
-// Console.WriteLine(bro.pekerjaan);
-// Console.WriteLine(bro.status_perkawinan);
-// Console.WriteLine(bro.kewarganegaraan);
-
