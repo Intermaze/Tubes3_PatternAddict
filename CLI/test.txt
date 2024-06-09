@@ -1,0 +1,1 @@
+D:\OneDrive - Institut Teknologi Bandung\Kuliah ITB\Semester 4\Stima\Tubes\Tubes3_PatternAddict\Converter\Converter.cs(74,47): error CS0103: The name 'height' does not exist in the current context [D:\OneDrive - Institut Teknologi Bandung\Kuliah ITB\Semester 4\Stima\Tubes\Tubes3_PatternAddict\Converter\Converter.csproj]
