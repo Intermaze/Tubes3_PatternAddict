@@ -54,5 +54,11 @@ namespace Tubes3
             string pattern = GenerateRegexPattern(normal);
             return Regex.IsMatch(preprocessedAbnormal, pattern, RegexOptions.IgnoreCase);
         }
+
+        public static void main(){
+            string abnormal = "Anton";
+            string normal = "Toni";
+            Console.WriteLine(Regex.IsMatch(normal, abnormal));
+        }
     }
 }

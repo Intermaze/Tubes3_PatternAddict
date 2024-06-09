@@ -88,5 +88,27 @@ namespace Tubes3
             }
             return lps;
         }
+
+        static int[] GenerateLPS2(string pattern)
+        {
+            int m = pattern.Length;
+            int[] lps = new int[m];
+            lps[0] = 0;
+            int i = 1;
+            int j = 1;
+            int t = 0;
+            while (j < m)
+            {
+                while (t > 0 && pattern[j] != pattern[t])
+                    t = lps[t - 1];
+                t = t + 1;
+                j = j + 1;
+                if (pattern[j - 1] == pattern[t - 1])
+                    lps[j - 1] = t;
+                else
+                    lps[j - 1] = t;
+            }
+            return lps;
+        }
     }
 }
