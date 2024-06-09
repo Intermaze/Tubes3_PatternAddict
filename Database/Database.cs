@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Data.Sqlite;
 
 namespace Tubes3
@@ -8,24 +10,24 @@ namespace Tubes3
     {
         private static string ddl =
             @"
-CREATE TABLE IF NOT EXISTS biodata (
-	nama VARCHAR(100),
-	tempat_lahir VARCHAR(50),
-	tanggal_lahir DATE,
-	jenis_kelamin VARCHAR(16) CHECK(jenis_kelamin IN ('Laki-Laki','Perempuan', NULL)),
-	golongan_darah VARCHAR(5),
-	alamat VARCHAR(255),
-	agama VARCHAR(50),
-	status_perkawinan VARCHAR(16) CHECK(status_perkawinan IN ('Belum Menikah', 'Menikah', 'Cerai')),
-	pekerjaan VARCHAR(100),
-	kewarganegaraan VARCHAR(50)
-);
+            CREATE TABLE IF NOT EXISTS biodata (
+                nama VARCHAR(100),
+                tempat_lahir VARCHAR(50),
+                tanggal_lahir DATE,
+                jenis_kelamin VARCHAR(16) CHECK(jenis_kelamin IN ('Laki-Laki','Perempuan', NULL)),
+                golongan_darah VARCHAR(5),
+                alamat VARCHAR(255),
+                agama VARCHAR(50),
+                status_perkawinan VARCHAR(16) CHECK(status_perkawinan IN ('Belum Menikah', 'Menikah', 'Cerai')),
+                pekerjaan VARCHAR(100),
+                kewarganegaraan VARCHAR(50)
+            );
 
-CREATE TABLE IF NOT EXISTS sidik_jari (
-		nama VARCHAR(100),
-		berkas_citra TEXT
-);
-";
+            CREATE TABLE IF NOT EXISTS sidik_jari (
+                    nama VARCHAR(100),
+                    berkas_citra TEXT
+            );
+            ";
         private static SqliteConnection connection = null;
 
         public static void Initialize()
@@ -184,30 +186,43 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             };
         }
 
-        // public static void FixFingerprint()
+        public static string FixFingerprint()
+        {
+            var listFingerprint = GetFingerprints();
+            var listBiodata = GetBiodata();
+            var listBiodataString = new List<string>();
+
+            foreach (var bio in listBiodata)
+            {
+                listBiodataString.Add(bio.nama);
+            }
+
+            KnuthMorrisPratt kmp = new KnuthMorrisPratt();
+            foreach (var fingerprint in listFingerprint)
+            {
+                var result = kmp.ProcessAll(fingerprint.nama, listBiodataString);
+                foreach (var item in result)
+                {
+                    // Console.WriteLine("Pattern: " + fingerprint.nama + " | Closest Match: " + item.Item1 + " | Text: " + item.Item2 + " | distance: " + item.Item3);
+                    return item.Item1;
+                }
+            }
+            return null;
+        }
+
+        // public static bool PatternExists(string pattern, List<string> textList, int maxDistance)
         // {
-        //     var listFingerprint = GetFingerprints();
-        //     var listBiodata = GetBiodata();
-        //     var listBiodataString = new List<string>();
-
-        //     foreach (var bio in listBiodata)
+        //     foreach (var text in textList)
         //     {
-        //         listBiodataString.Add(bio.nama);
-        //     }
-
-        //     KnuthMorrisPratt kmp = new KnuthMorrisPratt();
-        //     foreach (var fingerprint in listFingerprint)
-        //     {
-        //         int[] lcsTemp = new int[fingerprint.nama.Length];
-        //         kmp.generate_lps(fingerprint.nama, fingerprint.nama.Length, lcsTemp);
-        //         var result = kmp.process_all(fingerprint.nama, listBiodataString, lcsTemp);
-        //         foreach (var item in result)
+        //         if (Util.CalculateLevenshteinDistance(pattern, text) <= maxDistance)
         //         {
-        //             Console.WriteLine("Pattern: " + fingerprint.nama + " | Closest Match: " + item.Item1 + " | Text: " + item.Item2 + " | distance: " + item.Item3);
-        //             break;
+        //             return true;
         //         }
         //     }
+        //     return false;
+
         // }
+
 
         private static (Biodata, string, float) CompareFingerprint(string image, string imageBin, Func<string, List<string>, List<(string, string, int)>> matchFunc)
         {
@@ -252,13 +267,18 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
                 if (fingerprint.berkas_citra == result[0].Item1)
                 {
                     var resultNama = matchFunc(fingerprint.nama, listNamaNormal);
-                    string foundNama = resultNama[0].Item1;
+                    string foundNama = resultNama[0].Item2;
                     int foundNamaIdx = listNamaNormal.FindIndex(x => x.Equals(foundNama));
                     ans = listBiodata[foundNamaIdx];    
 
+                    Console.WriteLine(resultNama[0]);
+                    Console.WriteLine(resultNama[1]);
+                    Console.WriteLine(resultNama[2]);
+
+                    Console.WriteLine("Nama fingerprint: " + fingerprint.nama);
                     Console.WriteLine("Nama alay: " + ans.nama);
                     Console.WriteLine("Nama hasil: " + foundNama);   
-                    ans.nama = foundNama;
+                    ans.nama = fingerprint.nama;
 
                     foreach (var fingerpath in listFingerprint)
                     {
