@@ -291,14 +291,13 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
         {
             KnuthMorrisPratt kmp = new KnuthMorrisPratt();
             int[] lcs = new int[image.Length];
-            kmp.generate_lps(image, image.Length, lcs);
-            return CompareFingerprint(image, imageBin, (img, list) => kmp.process_all(img, list, lcs));
+            return CompareFingerprint(image, imageBin, kmp.ProcessAll);
         }
 
         public static (Biodata, string, float) CompareFingerprintBM(string image, string imageBin)
         {
             BoyerMoore bm = new BoyerMoore();
-            return CompareFingerprint(image, imageBin, bm.ProcessAllBoyerMoore);
+            return CompareFingerprint(image, imageBin, bm.ProcessAll);
         }
     }
 }

@@ -179,5 +179,4 @@ namespace Tubes3
             return distances[m, n];
         }
     }
-
 }

@@ -3,42 +3,32 @@ using System.Collections.Generic;
 
 namespace Tubes3
 {
-    public class KnuthMorrisPratt
+    public class KnuthMorrisPratt : IPatternMatchingAlgorithm
     {
-        public List<(string, string, int)> process_all(
-            string pattern_string,
-            List<string> database,
-            int[] lps
-        )
+        public List<(string, string, int)> ProcessAll(string pattern, List<string> database)
         {
             List<(string, string, int)> result = new List<(string, string, int)>();
-            
+            int[] lps = GenerateLPS(pattern);
             foreach (var data in database)
             {
-                bool patternFound = KMPSearch(pattern_string, data, lps);
-                if(patternFound) result.Add((pattern_string, data, 0));
+                if (KMPSearch(pattern, data, lps))
+                    result.Add((pattern, data, 0));
             }
-
-            if(result.Count() == 0){
+            if (result.Count == 0)
+            {
                 foreach (var data in database)
                 {
-
-                    (string, int) closestMatch = Util.FindClosestMatch(pattern_string, data);
-                    if (closestMatch.Item1 != "")
+                    (string, int) closestMatch = Util.FindClosestMatch(pattern, data);
+                    if (!string.IsNullOrEmpty(closestMatch.Item1))
                     {
-
-                        result.Add(
-                            (closestMatch.Item1, data, closestMatch.Item2)
-                        );
+                        result.Add((closestMatch.Item1, data, closestMatch.Item2));
                     }
-                } 
+                }
             }
-
-            result = result.OrderBy(tuple => tuple.Item3).ToList();
-            return result;
+            return result.OrderBy(tuple => tuple.Item3).ToList();
         }
 
-        bool KMPSearch(string pattern_string, string string_to_compare, int[] least_prefix_suffix)
+        static bool KMPSearch(string pattern_string, string string_to_compare, int[] least_prefix_suffix)
         {
             int first_length = pattern_string.Length;
             int second_length = string_to_compare.Length;
@@ -68,27 +58,35 @@ namespace Tubes3
             return false;
         }
 
-        public void generate_lps(string pattern, int length, int[] ans)
+        private static int[] GenerateLPS(string pattern)
         {
-            int len = 0;
-            int idx = 1;
-
-            ans[0] = 0; 
-
-            while (idx < length)
+            int m = pattern.Length;
+            int[] lps = new int[m];
+            int length = 0;
+            lps[0] = 0;
+            int i = 1;
+            while (i < m)
             {
-                if (pattern[idx] == pattern[len])
+                if (pattern[i] == pattern[length])
                 {
-                    len++;
-                    ans[idx] = len;
-                    idx++;
+                    length++;
+                    lps[i] = length;
+                    i++;
                 }
                 else
                 {
-                    if (len != 0) len = ans[len - 1];
-                    else ans[idx++] = 0;
+                    if (length != 0)
+                    {
+                        length = lps[length - 1];
+                    }
+                    else
+                    {
+                        lps[i] = 0;
+                        i++;
+                    }
                 }
             }
+            return lps;
         }
     }
 }

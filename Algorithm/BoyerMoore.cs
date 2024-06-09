@@ -3,30 +3,28 @@ using System.Globalization;
 
 namespace Tubes3
 {
-    public class BoyerMoore
+    public class BoyerMoore : IPatternMatchingAlgorithm
     {
-        public List<(string, string, int)> ProcessAllBoyerMoore(string pattern, List<string> database)
+        public List<(string, string, int)> ProcessAll(string pattern, List<string> database)
         {
             List<(string, string, int)> result = new List<(string, string, int)>();
             foreach (var data in database)
             {
                 int patternIndex = BoyerMooreSearch(pattern, data);
                 if (patternIndex != -1) result.Add((pattern, data, 0));
-
             }
-            if(result.Count() == 0){
-                foreach (var data in database){
+            if (result.Count == 0)
+            {
+                foreach (var data in database)
+                {
                     (string, int) closestMatch = Util.FindClosestMatch(pattern, data);
                     if (!string.IsNullOrEmpty(closestMatch.Item1))
                     {
-                        result.Add(
-                            (closestMatch.Item1, data, closestMatch.Item2)
-                        );
+                        result.Add((closestMatch.Item1, data, closestMatch.Item2));
                     }
                 }
             }
-            result = result.OrderBy(tuple => tuple.Item3).ToList();
-            return result;
+            return result.OrderBy(tuple => tuple.Item3).ToList();
         }
 
         private int BoyerMooreSearch(string pattern, string text)
