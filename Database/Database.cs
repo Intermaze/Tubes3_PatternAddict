@@ -225,13 +225,13 @@ namespace Tubes3
         private static (Biodata, string, float) CompareFingerprint(string image, string imageBin, Func<string, List<string>, List<(string, string, int)>> matchFunc)
         {
             var listFingerprint = GetFingerprints();
-            var listBiodata = GetBiodata();
+            List<Biodata> listBiodata = GetBiodata();
 
-            var listBiodataString = new List<string>();
-            foreach (var bio in listBiodata)
-            {
-                listBiodataString.Add(bio.nama);
-            }
+            // var listBiodataString = new List<string>();
+            // foreach (var bio in listBiodata)
+            // {
+            //     listBiodataString.Add(bio.nama);
+            // }
 
             var listFingerprintASCII = new List<Fingerprint>();
             foreach (var item in listFingerprint)
@@ -248,8 +248,14 @@ namespace Tubes3
             {
                 listFingerprintString.Add(fingerprint.berkas_citra);
             }
-
+            
             RegularExpression regex = new RegularExpression();
+            List<String> listNamaNormal = new List<string>();
+            foreach (var biodata in listBiodata){
+                var namaNormal = regex.ConvertAlayToNormal(biodata.nama);
+                listNamaNormal.Add(namaNormal);
+            }
+            
             string path = null;
             Biodata ans = null;
 
@@ -258,16 +264,15 @@ namespace Tubes3
             {
                 if (fingerprint.berkas_citra == result[0].Item1)
                 {
-                    foreach (var biodata in listBiodata)
-                    {
-                        if (regex.IsMatch(fingerprint.nama, biodata.nama))
-                        {
-                            Console.WriteLine("Nama alay: " + biodata.nama);
-                            ans = biodata;
-                            ans.nama = fingerprint.nama;
-                            break;
-                        }
-                    }
+                    var resultNama = matchFunc(fingerprint.nama, listNamaNormal);
+                    string foundNama = resultNama[0].Item1;
+                    int foundNamaIdx = listNamaNormal.FindIndex(x => x.Equals(foundNama));
+                    ans = listBiodata[foundNamaIdx];    
+
+                    Console.WriteLine("Nama alay: " + ans.nama);
+                    Console.WriteLine("Nama hasil: " + foundNama);   
+                    ans.nama = foundNama;
+
                     foreach (var fingerpath in listFingerprint)
                     {
                         if (fingerpath.nama == fingerprint.nama)

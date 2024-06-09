@@ -133,7 +133,8 @@ namespace GUI
             pathAns = CreateLabel("Path: ", biodataFont);
             timeLabel = CreateLabel("Waktu Eksekusi:");
             percentageLabel = CreateLabel("Persentase Kecocokan:");
-            NotFound = CreateLabel("Tidak ada yang cocok", biodataFont);
+            NotFound = CreateLabel("Tidak ada yang cocok", new Font(SystemFont.Bold, 10));
+            NotFound.Visible = false;
 
             inputImageView = new ImageView 
             {
@@ -273,13 +274,13 @@ namespace GUI
                     nationalityLabel.Text = $"Kewarganegaraan: {biodata.kewarganegaraan}";
                     religionLabel.Text = $"Agama: {biodata.agama}";
                     pathAns.Text = $"Path: {path}";
-                    timeLabel.Text = $"Waktu Eksekusi: {time} ms";
                     percentageLabel.Text = $"Persentase Kecocokan: {percentage}%";
                     NotFound.Visible = false;
                     SetImage(outputImageView, filePath);
                 }else{
                     NotFound.Visible = true;
                 }
+                timeLabel.Text = $"Waktu Eksekusi: {time} ms";
 
             }
         }

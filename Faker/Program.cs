@@ -1,9 +1,33 @@
 ﻿using Bogus;
 using Tubes3; 
 
-string[] list_of_religion = {"Islam", "Christian", "Buddha"};
+string[] list_of_religion = {
+    "Islam", "Christianity", "Buddhism", "Hinduism", "Judaism"
+};
 string[] list_of_gender = {"Perempuan", "Lelaki"};
-string[] list_of_job = {"Dokter", "Programmer", "Guru", "Tentara", "Dosen", "Pedagang", "Kontraktor", "Arsitektur"};
+string[] list_of_job = {
+    "Dokter", "Programmer", "Guru", "Tentara", "Dosen", "Pedagang", "Kontraktor", "Arsitektur",
+    "Perawat", "Akuntan", "Pengacara", "Jurnalis", "Insinyur", "Desainer", "Pengusaha", "Penulis",
+    "Fotografer", "Polisi", "Chef", "Ahli Gizi", "Psikolog", "Pilot", "Pramugari", "Manajer Proyek",
+    "Pustakawan", "Petani", "Montir", "Penata Rambut", "Konsultan", "Seniman", "Musisi", "Aktor",
+    "Peneliti", "Ekonom", "Terapis", "Arkeolog", "Astronom", "Penjaga Pantai", "Pemadam Kebakaran",
+    "Biolog", "Dentist", "Electrician", "Florist", "Geologist", "Horticulturist", "IT Specialist",
+    "Journalist", "Kindergarten Teacher", "Librarian", "Marine Biologist", "Nanny", "Optician",
+    "Pharmacist", "Quantity Surveyor", "Radiologist", "Statistician", "Translator", "Veterinarian",
+    "Web Developer", "Yoga Instructor", "Zoologist", "Banker", "Civil Engineer", "Data Scientist",
+    "Event Planner", "Fashion Designer", "Game Developer", "Hotel Manager", "Interpreter", "Jeweler",
+    "Logistics Manager", "Market Research Analyst", "Network Administrator", "Occupational Therapist",
+    "Personal Trainer", "Quality Control Inspector", "Real Estate Agent", "Social Worker", "Tour Guide",
+    "UX Designer", "Voice Actor", "Warehouse Manager", "X-ray Technician", "Youth Counselor", "Zookeeper",
+    "Air Traffic Controller", "Biomedical Engineer", "Chiropractor", "Dietitian", "Environmental Scientist",
+    "Financial Analyst", "Geneticist", "Hydrologist", "Industrial Designer", "Judge", "Landscape Architect",
+    "Microbiologist", "Neuroscientist", "Oceanographer", "Paralegal", "Robotics Engineer", "Sociologist",
+    "Tax Advisor", "Urban Planner", "Videographer", "Wind Turbine Technician", "Archivist", "Baker",
+    "Ceramic Artist", "Diver", "Exhibit Designer", "Film Director", "Glassblower", "Herbalist",
+    "Insurance Agent", "Jewelry Designer", "Knitter", "Lab Technician", "Makeup Artist", "Nutritionist",
+    "Osteopath", "Photographer", "Quality Assurance Tester", "Research Scientist", "Sound Engineer",
+    "Technical Writer", "Underwriter", "Voice Coach", "Writer", "Yoga Therapist", "3D Animator"
+};
 string[] list_of_marital_status = {"Menikah", "Belum Menikah"};
 var testBiodata = new Faker<Biodata>()
     .StrictMode(true)
@@ -30,6 +54,13 @@ var data = new Dictionary<char, char>{
     {'o', '0'},
     };
 
+bool IsFirstCharacterOfWord(string str, int index) {
+    if (index == 0) {
+        return true;
+    }
+    return str[index - 1] == ' ';
+}
+Random random = new Random();
 foreach (var filepath in Directory.GetFiles(Path.Join("..", "Data"))){
     var filename = Path.GetFileNameWithoutExtension(filepath);
     var biodata = testBiodata.Generate();
@@ -43,6 +74,17 @@ foreach (var filepath in Directory.GetFiles(Path.Join("..", "Data"))){
 
     Tubes3.Database.InsertBiodata(biodata);
     Tubes3.Database.InsertFingerprint(fingerprint_nama, filepath);
+
+    for (int j = 0; j < random.Next(1, 4); j++) {
+        if (biodata.nama.Length > 0) {
+            int indexToRemove;
+            do {
+                indexToRemove = random.Next(0, biodata.nama.Length);
+            } while (biodata.nama[indexToRemove] == ' ' || IsFirstCharacterOfWord(biodata.nama, indexToRemove));
+
+            biodata.nama = biodata.nama.Remove(indexToRemove, 1);
+        }
+    }
 
     Console.Write(i++);
     Console.Write(": ");
