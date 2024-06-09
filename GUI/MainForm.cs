@@ -133,7 +133,8 @@ namespace GUI
             pathAns = CreateLabel("Path: ", biodataFont);
             timeLabel = CreateLabel("Waktu Eksekusi:");
             percentageLabel = CreateLabel("Persentase Kecocokan:");
-            NotFound = CreateLabel("Tidak ada yang cocok", biodataFont);
+            NotFound = CreateLabel("Tidak ada yang cocok", new Font(SystemFont.Bold, 10));
+            NotFound.Visible = false;
 
             inputImageView = new ImageView 
             {
