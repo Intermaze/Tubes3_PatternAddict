@@ -212,7 +212,11 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
         private static (Biodata, string, float) CompareFingerprint(string image, string imageBin, Func<string, List<string>, List<(string, string, int)>> matchFunc)
         {
             var listFingerprint = GetFingerprints();
-            var listBiodata = GetBiodata();
+            List<Biodata> listBiodata = GetBiodata();
+            List<String> listNama = new List<string>();
+            foreach (var biodata in listBiodata){
+                listNama.Add(biodata.nama);
+            }
 
             var listBiodataString = new List<string>();
             foreach (var bio in listBiodata)
@@ -245,13 +249,17 @@ CREATE TABLE IF NOT EXISTS sidik_jari (
             {
                 if (fingerprint.berkas_citra == result[0].Item1)
                 {
+                    var normalNama = regex.ConvertAlayToNormal(fingerprint.nama);
+                    var resultNama = matchFunc(normalNama, listNama);
+                    string namaHasil = resultNama[0].Item1;
+                    Console.WriteLine("Nama alay: " + fingerprint.nama);
+                    Console.WriteLine("Nama hasil: " + resultNama[0].Item2);                 
+                    
                     foreach (var biodata in listBiodata)
                     {
-                        if (regex.IsMatch(fingerprint.nama, biodata.nama))
+                        if (namaHasil.Equals(biodata.nama))
                         {
-                            Console.WriteLine("Nama alay: " + biodata.nama);
                             ans = biodata;
-                            ans.nama = fingerprint.nama;
                             break;
                         }
                     }
