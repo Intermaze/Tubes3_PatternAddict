@@ -133,7 +133,7 @@ namespace GUI
             pathAns = CreateLabel("Path: ", biodataFont);
             timeLabel = CreateLabel("Waktu Eksekusi:");
             percentageLabel = CreateLabel("Persentase Kecocokan:");
-            NotFound = CreateLabel("");
+            NotFound = CreateLabel("Tidak ada yang cocok", biodataFont);
 
             inputImageView = new ImageView 
             {
@@ -275,9 +275,10 @@ namespace GUI
                     pathAns.Text = $"Path: {path}";
                     timeLabel.Text = $"Waktu Eksekusi: {time} ms";
                     percentageLabel.Text = $"Persentase Kecocokan: {percentage}%";
+                    NotFound.Visible = false;
                     SetImage(outputImageView, filePath);
                 }else{
-                    NotFound.Text = $"Tidak ada yang cocok";
+                    NotFound.Visible = true;
                 }
 
             }
